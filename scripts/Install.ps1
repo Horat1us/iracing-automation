@@ -191,6 +191,96 @@ function Extract-Icon {
     return $false
 }
 
+function Add-IconOverlay {
+    param(
+        [string]$BaseIconPath,
+        [string]$OutputPath,
+        [string]$OverlayType  # "focus" or "restart"
+    )
+    
+    try {
+        if (-not (Test-Path $BaseIconPath)) {
+            return $false
+        }
+        
+        # Load the base icon
+        $BaseImage = [System.Drawing.Image]::FromFile($BaseIconPath)
+        $Canvas = New-Object System.Drawing.Bitmap($BaseImage.Width, $BaseImage.Height)
+        $Graphics = [System.Drawing.Graphics]::FromImage($Canvas)
+        
+        # Draw the base image
+        $Graphics.DrawImage($BaseImage, 0, 0)
+        
+        # Set up overlay properties
+        $OverlaySize = [int]($BaseImage.Width * 0.4)  # 40% of icon size
+        $OverlayX = $BaseImage.Width - $OverlaySize - 2
+        $OverlayY = $BaseImage.Height - $OverlaySize - 2
+        
+        # Create overlay background circle
+        $OverlayBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(200, 255, 255, 255))
+        $Graphics.FillEllipse($OverlayBrush, $OverlayX, $OverlayY, $OverlaySize, $OverlaySize)
+        
+        # Draw overlay border
+        $BorderPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(150, 0, 0, 0), 1)
+        $Graphics.DrawEllipse($BorderPen, $OverlayX, $OverlayY, $OverlaySize, $OverlaySize)
+        
+        # Draw overlay symbol
+        $SymbolPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(200, 0, 0, 0), 2)
+        $SymbolBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(200, 0, 0, 0))
+        
+        $CenterX = $OverlayX + ($OverlaySize / 2)
+        $CenterY = $OverlayY + ($OverlaySize / 2)
+        $SymbolRadius = [int]($OverlaySize * 0.25)
+        
+        if ($OverlayType -eq "focus") {
+            # Draw eye symbol for focus
+            $EyeWidth = [int]($OverlaySize * 0.6)
+            $EyeHeight = [int]($OverlaySize * 0.35)
+            $EyeRect = New-Object System.Drawing.Rectangle(($CenterX - $EyeWidth/2), ($CenterY - $EyeHeight/2), $EyeWidth, $EyeHeight)
+            $Graphics.DrawEllipse($SymbolPen, $EyeRect)
+            
+            # Draw pupil
+            $PupilSize = [int]($OverlaySize * 0.15)
+            $Graphics.FillEllipse($SymbolBrush, ($CenterX - $PupilSize/2), ($CenterY - $PupilSize/2), $PupilSize, $PupilSize)
+        }
+        elseif ($OverlayType -eq "restart") {
+            # Draw circular arrow for restart
+            $ArrowRadius = [int]($OverlaySize * 0.25)
+            $ArrowRect = New-Object System.Drawing.Rectangle(($CenterX - $ArrowRadius), ($CenterY - $ArrowRadius), ($ArrowRadius * 2), ($ArrowRadius * 2))
+            
+            # Draw circular arrow (partial circle with arrow head)
+            $Graphics.DrawArc($SymbolPen, $ArrowRect, -45, 270)
+            
+            # Draw arrow head
+            $ArrowHeadSize = 4
+            $ArrowPoints = @(
+                (New-Object System.Drawing.Point(($CenterX + $ArrowRadius - 2), ($CenterY - $ArrowRadius + 4))),
+                (New-Object System.Drawing.Point(($CenterX + $ArrowRadius + 2), ($CenterY - $ArrowRadius - 2))),
+                (New-Object System.Drawing.Point(($CenterX + $ArrowRadius - 6), ($CenterY - $ArrowRadius - 2)))
+            )
+            $Graphics.FillPolygon($SymbolBrush, $ArrowPoints)
+        }
+        
+        # Save the result
+        $Canvas.Save($OutputPath, [System.Drawing.Imaging.ImageFormat]::Png)
+        
+        # Cleanup
+        $Graphics.Dispose()
+        $Canvas.Dispose()
+        $BaseImage.Dispose()
+        $OverlayBrush.Dispose()
+        $BorderPen.Dispose()
+        $SymbolPen.Dispose()
+        $SymbolBrush.Dispose()
+        
+        return $true
+    }
+    catch {
+        Write-Log "WARNING: Could not create overlay icon: $($_.Exception.Message)"
+        return $false
+    }
+}
+
 $ScriptsDir = Join-Path $Paths.ProjectRoot "scripts"
 
 # Generate StartAll.bat
@@ -219,11 +309,32 @@ $ButtonConfigs = @()
 foreach ($Program in $ValidatedPrograms) {
     $SafeProgramName = $Program.name -replace '[^a-zA-Z0-9]', '_'
     
-    # Extract icon from executable
-    $IconPath = Join-Path $IconsDir "$SafeProgramName.png"
-    $IconExtracted = Extract-Icon -ExecutablePath $Program.path -OutputPath $IconPath
+    # Extract base icon from executable
+    $BaseIconPath = Join-Path $IconsDir "$SafeProgramName.png"
+    $IconExtracted = Extract-Icon -ExecutablePath $Program.path -OutputPath $BaseIconPath
+    
+    # Generate overlay icons if base icon was extracted
+    $FocusIconPath = $null
+    $RestartIconPath = $null
+    $HasFocusIcon = $false
+    $HasRestartIcon = $false
+    
     if ($IconExtracted) {
-        Write-Log "Extracted icon for $($Program.name)"
+        Write-Log "Extracted base icon for $($Program.name)"
+        
+        # Create focus icon with eye overlay
+        $FocusIconPath = Join-Path $IconsDir "$SafeProgramName" + "_focus.png"
+        $HasFocusIcon = Add-IconOverlay -BaseIconPath $BaseIconPath -OutputPath $FocusIconPath -OverlayType "focus"
+        if ($HasFocusIcon) {
+            Write-Log "Created focus icon for $($Program.name)"
+        }
+        
+        # Create restart icon with circular arrow overlay
+        $RestartIconPath = Join-Path $IconsDir "$SafeProgramName" + "_restart.png"
+        $HasRestartIcon = Add-IconOverlay -BaseIconPath $BaseIconPath -OutputPath $RestartIconPath -OverlayType "restart"
+        if ($HasRestartIcon) {
+            Write-Log "Created restart icon for $($Program.name)"
+        }
     }
     
     # Generate Focus bat file
@@ -251,7 +362,11 @@ powershell.exe -ExecutionPolicy Bypass -File "RestartProgram.ps1" -ProgramName "
         ProgramName = $Program.name
         SafeName = $SafeProgramName
         HasIcon = $IconExtracted
-        IconPath = if ($IconExtracted) { "icons\$SafeProgramName.png" } else { $null }
+        BaseIconPath = if ($IconExtracted) { "icons\$SafeProgramName.png" } else { $null }
+        FocusIconPath = if ($HasFocusIcon) { "icons\$SafeProgramName" + "_focus.png" } else { $null }
+        RestartIconPath = if ($HasRestartIcon) { "icons\$SafeProgramName" + "_restart.png" } else { $null }
+        HasFocusIcon = $HasFocusIcon
+        HasRestartIcon = $HasRestartIcon
         FocusBat = "shell\Focus_$SafeProgramName.bat"
         RestartBat = "shell\Restart_$SafeProgramName.bat"
     }
@@ -329,32 +444,62 @@ $HtmlContent = @"
 "@
 
 foreach ($ButtonConfig in $ButtonConfigs) {
-    $IconHtml = if ($ButtonConfig.HasIcon) {
-        "<img src=`"$($ButtonConfig.IconPath)`" alt=`"$($ButtonConfig.ProgramName) icon`">"
+    # Generate appropriate icons for each button type
+    $FocusIconHtml = if ($ButtonConfig.HasFocusIcon) {
+        "<img src=`"$($ButtonConfig.FocusIconPath)`" alt=`"$($ButtonConfig.ProgramName) focus icon`">"
+    } elseif ($ButtonConfig.HasIcon) {
+        "<img src=`"$($ButtonConfig.BaseIconPath)`" alt=`"$($ButtonConfig.ProgramName) icon`">"
     } else {
-        "<div class=`"no-icon`">?</div>"
+        "<div class=`"no-icon`">👁</div>"
+    }
+    
+    $RestartIconHtml = if ($ButtonConfig.HasRestartIcon) {
+        "<img src=`"$($ButtonConfig.RestartIconPath)`" alt=`"$($ButtonConfig.ProgramName) restart icon`">"
+    } elseif ($ButtonConfig.HasIcon) {
+        "<img src=`"$($ButtonConfig.BaseIconPath)`" alt=`"$($ButtonConfig.ProgramName) icon`">"
+    } else {
+        "<div class=`"no-icon`">🔄</div>"
     }
     
     $FocusBatPath = ($Paths.ProjectRoot + "\" + $ButtonConfig.FocusBat) -replace '\\', '\\'
     $RestartBatPath = ($Paths.ProjectRoot + "\" + $ButtonConfig.RestartBat) -replace '\\', '\\'
+    
+    # Determine icon paths to display
+    $FocusIconDisplayPath = if ($ButtonConfig.HasFocusIcon) {
+        ($Paths.ProjectRoot + "\" + $ButtonConfig.FocusIconPath) -replace '\\', '\\'
+    } elseif ($ButtonConfig.HasIcon) {
+        ($Paths.ProjectRoot + "\" + $ButtonConfig.BaseIconPath) -replace '\\', '\\'
+    } else {
+        "Use emoji fallback (👁)"
+    }
+    
+    $RestartIconDisplayPath = if ($ButtonConfig.HasRestartIcon) {
+        ($Paths.ProjectRoot + "\" + $ButtonConfig.RestartIconPath) -replace '\\', '\\'
+    } elseif ($ButtonConfig.HasIcon) {
+        ($Paths.ProjectRoot + "\" + $ButtonConfig.BaseIconPath) -replace '\\', '\\'
+    } else {
+        "Use emoji fallback (🔄)"
+    }
     
     $HtmlContent += @"
             <div class="button-card">
                 <h3>$($ButtonConfig.ProgramName)</h3>
                 
                 <div class="button-info">
-                    $IconHtml
+                    $FocusIconHtml
                     <div>
                         <strong>Focus Button</strong><br>
                         <strong>File:</strong> <span class="file-path">$FocusBatPath</span>
+                        <br><strong>Icon:</strong> <span class="file-path">$FocusIconDisplayPath</span>
                     </div>
                 </div>
                 
                 <div class="button-info">
-                    $IconHtml
+                    $RestartIconHtml
                     <div>
                         <strong>Restart Button</strong><br>
                         <strong>File:</strong> <span class="file-path">$RestartBatPath</span>
+                        <br><strong>Icon:</strong> <span class="file-path">$RestartIconDisplayPath</span>
                     </div>
                 </div>
             </div>
@@ -366,11 +511,12 @@ $HtmlContent += @"
 
         <h2>Button Configuration Tips</h2>
         <ul>
-            <li><strong>Focus buttons</strong> - Bring the program window to the foreground</li>
-            <li><strong>Restart buttons</strong> - Close and restart the specific program</li>
+            <li><strong>Focus buttons</strong> - Bring the program window to the foreground (eye overlay icon)</li>
+            <li><strong>Restart buttons</strong> - Close and restart the specific program (circular arrow overlay icon)</li>
             <li><strong>Start All</strong> - Launch all configured programs at once</li>
             <li><strong>Stop All</strong> - Close all configured programs</li>
-            <li>Icons are automatically extracted from program executables (72x72 PNG)</li>
+            <li><strong>Icon generation</strong> - Base icons are extracted from executables, then focus and restart variants are created with visual overlays</li>
+            <li><strong>Overlay symbols</strong> - Eye symbol (👁) for focus actions, circular arrow (🔄) for restart actions</li>
             <li>All bat files use absolute paths and will work regardless of current directory</li>
         </ul>
 
