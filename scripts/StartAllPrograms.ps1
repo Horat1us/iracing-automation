@@ -16,7 +16,8 @@ foreach ($Program in $Config.programs) {
     Write-Log "Checking status: $($Program.name)"
 
     # Проверяем, запущена ли программа
-    $Process = Get-Process -Name $Program.executableName.Replace('.exe', '') -ErrorAction SilentlyContinue
+    $ExecutableName = Get-ExecutableNameFromPaths -Paths $Program.paths
+    $Process = Get-Process -Name $ExecutableName.Replace('.exe', '') -ErrorAction SilentlyContinue
 
     if ($Process) {
         Write-Log "$($Program.name) already started (PID: $($Process.Id))"

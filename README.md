@@ -14,20 +14,20 @@ The project automatically generates a complete Stream Deck setup with organized 
 
 *This is what your Stream Deck will look like after running the installation - fully configured with color-coded action buttons and professional icons extracted from your installed applications.*
 
-### 🎯 **Core Features:**
+### **Core Features:**
 - **Automated Application Discovery** - Scans your system for iRacing applications and validates installation paths
 - **Professional Icon Generation** - Extracts program icons and creates color-coded overlay variants for different actions
 - **Stream Deck Integration** - Generates ready-to-use batch files and provides visual setup instructions
 - **Smart Window Management** - Handles programs with dynamic window titles (like Crew Chief and MarvinsAIRA)
 - **One-Click Control** - Start all applications, stop all applications, or manage individual programs
 
-### 🖥️ **Stream Deck Benefits:**
+### **Stream Deck Benefits:**
 - **Visual Button Layout** - Each application gets Focus, Restart, Start, and Stop buttons with distinctive overlay icons
 - **Copy-Paste Setup** - Generated HTML guide with copy buttons for easy Stream Deck configuration  
 - **Color-Coded Actions** - Blue for Focus, Orange for Restart, Green for Start, Red for Stop
 - **Professional Icons** - 144x144 PNG icons with high-contrast overlays optimized for high-resolution displays
 
-### 🔧 **Supported Applications:**
+### **Supported Applications:**
 - **iRacing UI** - The main simulator interface
 - **Crew Chief** - Voice spotter and race engineer
 - **MarvinsAIRA** - AI-powered race assistant  
@@ -78,16 +78,64 @@ After installation:
 - `StreamDeckInstructions.html` - Visual setup guide
 - `logs/install_*.log` - Installation log
 
+## How It Works
+
+### Program Actions Overview
+The automation system provides six core actions for managing applications:
+
+#### **Start Operations**
+- **Individual Start**: Launches a specific program if not already running
+- **Start All**: Launches all configured programs sequentially with 2-second delays
+- **Process Detection**: Checks if program is already running before attempting to start
+- **Path Validation**: Verifies executable exists before launching
+
+#### **Stop Operations** 
+- **Graceful Shutdown**: First attempts `CloseMainWindow()` (3-second timeout)
+- **Force Termination**: Uses `Kill()` if graceful shutdown fails
+- **Multi-Instance Support**: Handles multiple running instances of the same program
+- **Stop All**: Closes all configured programs using the same graceful→force method
+
+#### **Restart Operations**
+- **Clean Restart**: Stops the program completely, then starts it fresh
+- **Combined Process**: Uses stop logic (graceful→force) followed by start logic
+
+#### **Focus Operations**
+- **Window Detection**: Finds windows by title with exact or partial matching
+- **Process Validation**: Ensures window belongs to the correct process
+- **Window Restoration**: Restores minimized windows before focusing
+- **Fallback Method**: Uses process MainWindowHandle if title matching fails
+
+### Technical Implementation
+
+#### Process Management
+- **Executable Name Derivation**: Automatically extracts from the first valid path in configuration
+- **Process Name Matching**: Removes `.exe` extension for `Get-Process` operations
+- **Error Handling**: Continues with remaining processes if individual operations fail
+
+#### Window Management  
+- **Exact Title Matching**: Default behavior for programs with static window titles
+- **Partial Title Matching**: For programs with dynamic titles (version numbers, status)
+- **Multi-Window Support**: Focuses first matching window when multiple exist
+
+#### Configuration Processing
+- **Path Resolution**: Tests multiple installation locations in priority order
+- **Username Expansion**: Replaces `{USERNAME}` with actual Windows username
+- **Validation**: Confirms executable files exist before adding to final configuration
+
 ## Available Scripts
 
 - `StartAllPrograms.ps1` - Launch all configured programs
-- `StopAllPrograms.ps1` - Close all configured programs  
+- `StopAllPrograms.ps1` - Close all configured programs gracefully or force-kill if needed
 - `StartProgram.ps1 -ProgramName "Name"` - Launch specific program
-- `StopProgram.ps1 -ProgramName "Name"` - Close specific program
-- `RestartProgram.ps1 -ProgramName "Name"` - Restart specific program
+- `StopProgram.ps1 -ProgramName "Name"` - Close specific program (graceful → force)
+- `RestartProgram.ps1 -ProgramName "Name"` - Stop then start specific program
 - `FocusWindow.ps1 -ProgramName "Name"` - Focus specific program window
 
-## Contributing - Configuring programs-init.json
+## Contributing - Adding New Programs
+
+**Note for Users**: Regular users don't need to read this section. The `Install.ps1` script automatically generates your `programs.json` configuration file.
+
+**Note for Contributors**: This section explains how to add new programs to the project's `programs-init.json` template file.
 
 When adding new programs to `config/programs-init.json`, follow these guidelines:
 
@@ -100,7 +148,6 @@ When adding new programs to `config/programs-init.json`, follow these guidelines
 ```json
 {
   "name": "YourProgram",
-  "executableName": "YourProgram.exe",
   "paths": [
     "C:\\Program Files\\YourProgram\\YourProgram.exe",
     "C:\\Users\\{USERNAME}\\AppData\\Local\\Programs\\YourProgram\\YourProgram.exe",
@@ -127,7 +174,6 @@ Some programs have dynamic window titles that include variable information like 
 ```json
 {
   "name": "CrewChiefV4",
-  "executableName": "CrewChiefV4.exe",
   "paths": [
     "C:\\Program Files (x86)\\Britton IT Ltd\\CrewChiefV4\\CrewChiefV4.exe"
   ],
@@ -140,6 +186,30 @@ Some programs have dynamic window titles that include variable information like 
 - **Exact matching** (default): Use the complete window title for programs with static titles
 - **Partial matching**: Set `"partialMatch": true` and use only the beginning portion of the title that doesn't change
 - **Focus functionality**: The `FocusWindow.ps1` script will find windows that start with the specified title when `partialMatch` is enabled
+
+## Troubleshooting
+
+### Programs Not Closing Properly
+1. **Check Process Name**: Verify executable name matches running process in Task Manager
+2. **Multiple Instances**: System handles multiple instances but may need time between operations  
+3. **Permissions**: Some programs require administrator privileges to close
+4. **Stubborn Processes**: System attempts graceful close (3 seconds), then force-kills
+
+### Window Focus Issues
+1. **Title Mismatch**: Enable `partialMatch` for programs with dynamic window titles
+2. **Multiple Windows**: Focus targets the first matching window found
+3. **Minimized Windows**: System restores minimized windows before focusing
+
+### Installation Issues
+1. **Program Not Found**: Use manual path entry during installation if auto-detection fails
+2. **PowerShell Execution Policy**: Run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+3. **Missing Icons**: Some programs may not have extractable icons; functionality still works; 
+check logs and  try running Install script again
+
+### Stream Deck Setup Issues
+1. **Button Not Working**: Verify bat file path is correct in Stream Deck configuration
+2. **Icon Missing**: Check if icon file exists in the icons folder
+3. **Permission Denied**: Run Stream Deck as administrator if needed **[not recommended]**
 
 ## Requirements
 

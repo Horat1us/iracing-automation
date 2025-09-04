@@ -2,7 +2,6 @@
   "programs": [
     {
       "name": "iRacing",
-      "executableName": "iRacingUI.exe",
       "paths": [
         "C:\\Program Files (x86)\\iRacing\\ui\\iRacingUI.exe",
         "C:\\Program Files\\iRacing\\ui\\iRacingUI.exe",
@@ -12,7 +11,6 @@
     },
     {
       "name": "MarvinsAIRA",
-      "executableName": "MarvinsAIRA.exe",
       "paths": [
         "C:\\Program Files\\MarvinsAIRA\\MarvinsAIRA.exe",
         "C:\\Users\\{USERNAME}\\AppData\\Local\\Programs\\MarvinsAIRA\\MarvinsAIRA.exe",
@@ -23,7 +21,6 @@
     },
     {
       "name": "TradingPaints",
-      "executableName": "TradingPaints.exe",
       "paths": [
         "C:\\Program Files (x86)\\Rhinode LLC\\Trading Paints\\Trading Paints.exe",
         "C:\\Program Files\\Rhinode LLC\\Trading Paints\\Trading Paints.exe"
@@ -32,7 +29,6 @@
     },
     {
       "name": "RacelabApps",
-      "executableName": "RacelabApps.exe",
       "paths": [
         "C:\\Users\\{USERNAME}\\AppData\\Local\\racelabapps\\RacelabApps.exe"
       ],
@@ -40,7 +36,6 @@
     },
     {
       "name": "CrewChiefV4",
-      "executableName": "CrewChiefV4.exe",
       "paths": [
         "C:\\Program Files (x86)\\Britton IT Ltd\\CrewChiefV4\\CrewChiefV4.exe",
         "C:\\Users\\{USERNAME}\\AppData\\Local\\Programs\\Britton IT Ltd\\CrewChiefV4\\CrewChiefV4.exe",

@@ -13,7 +13,8 @@ $Config = Get-ProgramsConfig -ConfigPath $Paths.ConfigPath
 foreach ($Program in $Config.programs) {
     Write-Log "Stopping: $($Program.name)"
 
-    $ProcessName = $Program.executableName.Replace('.exe', '')
+    $ExecutableName = Get-ExecutableNameFromPaths -Paths $Program.paths
+    $ProcessName = $ExecutableName.Replace('.exe', '')
     $Processes = Get-Process -Name $ProcessName -ErrorAction SilentlyContinue
 
     if ($Processes) {

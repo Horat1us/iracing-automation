@@ -59,7 +59,6 @@ foreach ($Program in $InitConfig.programs) {
         # Create program object with single validated path
         $ValidatedProgram = @{
             name = $Program.name
-            executableName = $Program.executableName
             path = $FoundPath
             windowTitle = $Program.windowTitle
         }
@@ -89,11 +88,10 @@ foreach ($Program in $InitConfig.programs) {
             switch ($Choice) {
                 'P' {
                     do {
-                        $NewPath = Read-Host "Enter correct path to $($Program.executableName)"
+                        $NewPath = Read-Host "Enter correct path to $($Program.windowTitle)"
                         if (Test-Path $NewPath) {
                             $ValidatedProgram = @{
                                 name = $Program.name
-                                executableName = $Program.executableName
                                 path = $NewPath
                                 windowTitle = $Program.windowTitle
                             }
@@ -140,7 +138,7 @@ if ($AddMore -eq 'y' -or $AddMore -eq 'Y') {
         
         $NewProgram = @{}
         $NewProgram.name = Read-Host "Enter program name"
-        $NewProgram.executableName = Read-Host "Enter executable name (e.g., Program.exe)"
+        # Executable name will be derived from the path
         
         do {
             $NewProgram.path = Read-Host "Enter full path to executable"

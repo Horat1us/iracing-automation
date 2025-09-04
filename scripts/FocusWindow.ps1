@@ -23,7 +23,8 @@ if (-not $Program) {
 }
 
 # Check if program is running
-$ProcessName = $Program.executableName.Replace('.exe', '')
+$ExecutableName = Get-ExecutableNameFromPaths -Paths $Program.paths
+$ProcessName = $ExecutableName.Replace('.exe', '')
 $Process = Get-Process -Name $ProcessName -ErrorAction SilentlyContinue
 
 if (-not $Process) {

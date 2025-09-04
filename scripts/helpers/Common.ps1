@@ -46,6 +46,20 @@ function Get-ProgramsConfig {
     return Get-Content $ConfigPath | ConvertFrom-Json
 }
 
+function Get-ExecutableNameFromPaths {
+    param([array]$Paths)
+    
+    if (-not $Paths -or $Paths.Count -eq 0) {
+        throw "No paths provided"
+    }
+    
+    # Extract the executable name from the first path
+    $FirstPath = $Paths[0]
+    $ExecutableName = Split-Path -Leaf $FirstPath
+    
+    return $ExecutableName
+}
+
 function Find-WindowByTitle {
     param(
         [string]$WindowTitle,
