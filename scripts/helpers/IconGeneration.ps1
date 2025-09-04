@@ -237,6 +237,99 @@ function New-ProgramIcons {
     return $IconResults
 }
 
+function Add-GlobalIconOverlay {
+    param(
+        [string]$BaseIconPath,
+        [string]$OutputPath,
+        [string]$OverlayType  # "startall", "stopall"
+    )
+    
+    try {
+        if (-not (Test-Path $BaseIconPath)) {
+            Write-Log "WARNING: Base icon not found at $BaseIconPath"
+            return $false
+        }
+        
+        Write-Log "Creating $OverlayType global overlay icon from $BaseIconPath to $OutputPath"
+        
+        # Load the base icon
+        $BaseImage = [System.Drawing.Image]::FromFile($BaseIconPath)
+        $Canvas = New-Object System.Drawing.Bitmap($BaseImage.Width, $BaseImage.Height)
+        $Graphics = [System.Drawing.Graphics]::FromImage($Canvas)
+        
+        # Draw the base image
+        $Graphics.DrawImage($BaseImage, 0, 0)
+        
+        # Set up overlay properties - bigger, centered, with opacity
+        $OverlaySize = [int]($BaseImage.Width * 0.8)  # 80% of icon size (much bigger than individual 60%)
+        $CenterX = $BaseImage.Width / 2
+        $CenterY = $BaseImage.Height / 2
+        $OverlayX = $CenterX - ($OverlaySize / 2)
+        $OverlayY = $CenterY - ($OverlaySize / 2)
+        
+        # Create overlay background circle with opacity and distinctive colors for global actions
+        switch ($OverlayType) {
+            "startall" {
+                # Semi-transparent green background for Start All
+                $OverlayBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(180, 34, 139, 34))  # Green with opacity
+                $BorderPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 255, 255, 255), 3)  # Thicker white border
+                $SymbolPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 255, 255, 255), 4)  # Thicker white symbol
+                $SymbolBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(255, 255, 255, 255))  # White fill
+            }
+            "stopall" {
+                # Semi-transparent red background for Stop All
+                $OverlayBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(180, 220, 20, 60))  # Red with opacity
+                $BorderPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 255, 255, 255), 3)  # Thicker white border
+                $SymbolPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 255, 255, 255), 4)  # Thicker white symbol
+                $SymbolBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(255, 255, 255, 255))  # White fill
+            }
+        }
+        
+        $Graphics.FillEllipse($OverlayBrush, $OverlayX, $OverlayY, $OverlaySize, $OverlaySize)
+        $Graphics.DrawEllipse($BorderPen, $OverlayX, $OverlayY, $OverlaySize, $OverlaySize)
+        
+        $SymbolCenterX = $CenterX
+        $SymbolCenterY = $CenterY
+        
+        switch ($OverlayType) {
+            "startall" {
+                # Draw larger play triangle for Start All
+                $TriangleSize = [int]($OverlaySize * 0.5)  # Bigger triangle
+                $TrianglePoints = @(
+                    (New-Object System.Drawing.Point(($SymbolCenterX - $TriangleSize/3), ($SymbolCenterY - $TriangleSize/2))),
+                    (New-Object System.Drawing.Point(($SymbolCenterX - $TriangleSize/3), ($SymbolCenterY + $TriangleSize/2))),
+                    (New-Object System.Drawing.Point(($SymbolCenterX + $TriangleSize/2), $SymbolCenterY))
+                )
+                $Graphics.FillPolygon($SymbolBrush, $TrianglePoints)
+            }
+            "stopall" {
+                # Draw larger square for Stop All
+                $SquareSize = [int]($OverlaySize * 0.6)  # Bigger square
+                $SquareRect = New-Object System.Drawing.Rectangle(($SymbolCenterX - $SquareSize/2), ($SymbolCenterY - $SquareSize/2), $SquareSize, $SquareSize)
+                $Graphics.FillRectangle($SymbolBrush, $SquareRect)
+            }
+        }
+        
+        # Save the result
+        $Canvas.Save($OutputPath, [System.Drawing.Imaging.ImageFormat]::Png)
+        
+        # Cleanup
+        $Graphics.Dispose()
+        $Canvas.Dispose()
+        $BaseImage.Dispose()
+        $OverlayBrush.Dispose()
+        $BorderPen.Dispose()
+        $SymbolPen.Dispose()
+        $SymbolBrush.Dispose()
+        
+        return $true
+    }
+    catch {
+        Write-Log "WARNING: Could not create global overlay icon: $($_.Exception.Message)"
+        return $false
+    }
+}
+
 function New-GlobalActionIcons {
     param(
         [string]$BaseIconPath,
@@ -251,20 +344,20 @@ function New-GlobalActionIcons {
     }
     
     if (Test-Path $BaseIconPath) {
-        # Create StartAll icon with play overlay
+        # Create StartAll icon with larger, centered, semi-transparent play overlay
         $StartAllIconPath = Join-Path $IconsDir "StartAll.png"
-        $HasStartAllIcon = Add-IconOverlay -BaseIconPath $BaseIconPath -OutputPath $StartAllIconPath -OverlayType "start"
+        $HasStartAllIcon = Add-GlobalIconOverlay -BaseIconPath $BaseIconPath -OutputPath $StartAllIconPath -OverlayType "startall"
         if ($HasStartAllIcon) {
-            Write-Log "Created StartAll icon with play overlay"
+            Write-Log "Created StartAll icon with large centered play overlay"
             $GlobalIcons.StartAllIconPath = "icons\StartAll.png"
             $GlobalIcons.HasStartAllIcon = $true
         }
         
-        # Create StopAll icon with stop overlay
+        # Create StopAll icon with larger, centered, semi-transparent stop overlay
         $StopAllIconPath = Join-Path $IconsDir "StopAll.png"
-        $HasStopAllIcon = Add-IconOverlay -BaseIconPath $BaseIconPath -OutputPath $StopAllIconPath -OverlayType "stop"
+        $HasStopAllIcon = Add-GlobalIconOverlay -BaseIconPath $BaseIconPath -OutputPath $StopAllIconPath -OverlayType "stopall"
         if ($HasStopAllIcon) {
-            Write-Log "Created StopAll icon with stop overlay"
+            Write-Log "Created StopAll icon with large centered stop overlay"
             $GlobalIcons.StopAllIconPath = "icons\StopAll.png"
             $GlobalIcons.HasStopAllIcon = $true
         }
