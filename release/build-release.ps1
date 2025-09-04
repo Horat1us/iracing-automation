@@ -35,9 +35,9 @@ Write-Host "✅ Created VERSION.txt"
 Write-Host "Release directory structure created successfully"
 
 # Display package contents for verification
-Write-Host "`n📦 Package contents:"
+Write-Host ""
+Write-Host "Package contents:"
 Get-ChildItem -Path $ReleaseDir -Recurse | ForEach-Object {
-    $relativePath = $_.FullName.Replace((Resolve-Path $ReleaseDir).Path, '')
-    Write-Host "  " -NoNewline
-    Write-Host $relativePath
+    $relativePath = $_.FullName.Replace((Resolve-Path $ReleaseDir).Path, "")
+    Write-Output "  $($_.Name)"
 }
