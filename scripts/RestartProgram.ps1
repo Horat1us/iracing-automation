@@ -4,7 +4,7 @@ param(
 )
 
 # Import common functions
-. (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Definition) "Common.ps1")
+. (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Definition) "helpers\Common.ps1")
 
 # Initialize paths and logging
 $Paths = Get-ProjectPaths -ScriptName "restart"
