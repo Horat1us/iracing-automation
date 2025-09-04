@@ -34,9 +34,12 @@ jobs:
       shell: powershell
       run: |
         $version = "${{ steps.version.outputs.VERSION }}"
+        $numericVersion = $version -replace '^v', ''  # Remove 'v' prefix for ps2exe
         $releaseDir = "iRacing-Automation-$version"
         
         Write-Host "Compiling PowerShell script to EXE..."
+        Write-Host "Version: $version, Numeric version for EXE: $numericVersion"
+        
         ps2exe -inputFile "release\Setup-For-EXE.ps1" `
                -outputFile "$releaseDir\iRacing-Automation-Setup.exe" `
                -title "iRacing Automation Setup" `
@@ -44,7 +47,7 @@ jobs:
                -company "horat1us" `
                -product "iRacing Automation" `
                -copyright "MIT License" `
-               -version $version `
+               -version $numericVersion `
                -noConsole `
                -requireAdmin $false
                
