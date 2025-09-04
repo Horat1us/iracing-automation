@@ -24,25 +24,27 @@ jobs:
       shell: bash
       run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
-    - name: Cache PowerShell modules
+    - name: Cache ps2exe module
       uses: actions/cache@v4
+      id: cache-ps2exe
       with:
-        path: |
-          ~\Documents\PowerShell\Modules
-          ~\Documents\WindowsPowerShell\Modules
-        key: ${{ runner.os }}-powershell-modules-ps2exe-v1
-        restore-keys: |
-          ${{ runner.os }}-powershell-modules-
-          
+        path: C:\Users\runneradmin\Documents\PowerShell\Modules\ps2exe
+        key: ps2exe-module-v1
+        
     - name: Install ps2exe
+      if: steps.cache-ps2exe.outputs.cache-hit != 'true'
       shell: powershell
       run: |
-        if (-not (Get-Module -ListAvailable -Name ps2exe)) {
-          Write-Host "Installing ps2exe module..."
-          Install-Module -Name ps2exe -Force -Scope CurrentUser -AllowPrerelease
-        } else {
-          Write-Host "✅ ps2exe already cached and available"
+        Write-Host "Cache miss - Installing ps2exe module..."
+        Install-Module -Name ps2exe -Force -Scope CurrentUser -AllowPrerelease
+        
+    - name: Verify ps2exe
+      shell: powershell
+      run: |
+        if (steps.cache-ps2exe.outputs.cache-hit -eq 'true') {
+          Write-Host "ps2exe loaded from cache"
         }
+        Get-Module -ListAvailable -Name ps2exe | Format-Table Name, Version, Path
 
     - name: Build release package
       shell: powershell
