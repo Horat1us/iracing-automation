@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Extract version from tag
+      id: version
+      shell: bash
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      
+    - name: Install ps2exe
+      shell: powershell
+      run: Install-Module -Name ps2exe -Force -Scope CurrentUser -AllowPrerelease
+        
+    - name: Build release package
+      shell: powershell
+      run: |
+        $version = "${{ steps.version.outputs.VERSION }}"
+        $releaseDir = "iRacing-Automation-$version"
+        
+        .\release\build-release.ps1 -Version $version -ReleaseDir $releaseDir
+        
+    - name: Compile EXE
+      shell: powershell
+      run: |
+        $version = "${{ steps.version.outputs.VERSION }}"
+        $releaseDir = "iRacing-Automation-$version"
+        
+        Write-Host "Compiling PowerShell script to EXE..."
+        ps2exe -inputFile "release\Setup-For-EXE.ps1" `
+               -outputFile "$releaseDir\iRacing-Automation-Setup.exe" `
+               -title "iRacing Automation Setup" `
+               -description "iRacing Automation Setup - Stream Deck Integration" `
+               -company "horat1us" `
+               -product "iRacing Automation" `
+               -copyright "MIT License" `
+               -version $version `
+               -noConsole `
+               -requireAdmin $false
+               
+        Write-Host "✅ EXE compiled successfully"
+        
+    - name: Create release ZIP
+      shell: powershell
+      run: |
+        $version = "${{ steps.version.outputs.VERSION }}"
+        $releaseDir = "iRacing-Automation-$version"
+        $zipFile = "$releaseDir.zip"
+        
+        Compress-Archive -Path $releaseDir -DestinationPath $zipFile -Force
+        Write-Host "✅ Release package created: $zipFile"
+        
+    - name: Generate release notes
+      shell: powershell
+      run: |
+        $version = "${{ steps.version.outputs.VERSION }}"
+        .\release\generate-release-notes.ps1 -Version $version -OutputFile "release_notes.md"
+        
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: iRacing-Automation-${{ steps.version.outputs.VERSION }}.zip
+        body_path: release_notes.md
+        draft: false
+        prerelease: false
+        generate_release_notes: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

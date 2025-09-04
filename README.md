@@ -37,6 +37,27 @@ The project automatically generates a complete Stream Deck setup with organized 
 
 ## Quick Start
 
+### 🚀 Easy Installation (Recommended)
+
+1. **Download the latest release:**
+   - Go to [Releases](https://github.com/horat1us/iracing-automation/releases)
+   - Download `iRacing-Automation-v*.*.*.zip`
+
+2. **Extract and run:**
+   - Extract the ZIP file anywhere on your computer
+   - Choose your installation method:
+     - **Double-click `iRacing-Automation-Setup.bat`** (recommended - you can inspect the file)
+     - **OR double-click `iRacing-Automation-Setup.exe`** (one-click installation)
+
+3. **Follow the prompts:**
+   - PowerShell will be installed automatically if missing
+   - Your programs will be detected automatically
+   - Browser opens with Stream Deck setup guide
+
+### 🛠️ Development Installation
+
+For contributors or advanced users:
+
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/horat1us/iracing-automation.git
@@ -47,10 +68,6 @@ The project automatically generates a complete Stream Deck setup with organized 
    ```powershell
    .\scripts\Install.ps1
    ```
-
-3. **Configure Stream Deck:**
-   - Open `StreamDeckInstructions.html` in your browser
-   - Follow the visual guide to set up buttons
 
 ## Generated Setup Instructions
 

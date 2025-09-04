@@ -1,0 +1,26 @@
+iRacing Automation - Choose Your Setup Method
+
+You have TWO ways to install:
+
+METHOD 1: Batch File (Recommended for first-time users)
+   → Double-click: iRacing-Automation-Setup.bat
+   ✅ You can inspect the file contents before running
+   ✅ Shows detailed progress in console
+   ✅ More transparent process
+
+METHOD 2: Executable File (Quick & Easy)  
+   → Double-click: iRacing-Automation-Setup.exe
+   ✅ Professional one-click installation
+   ✅ Cleaner, more familiar experience
+   ✅ Same functionality as batch file
+
+Both methods do exactly the same thing - choose based on your preference!
+
+ What happens during installation:
+• Checks for PowerShell (installs automatically if missing)
+• Scans your system for iRacing applications
+• Generates Stream Deck integration files
+• Creates custom icons and batch files
+• Opens setup guide in your browser
+
+Need help? Visit: https://github.com/horat1us/iracing-automation

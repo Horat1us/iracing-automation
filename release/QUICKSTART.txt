@@ -1,0 +1,29 @@
+🚀 QUICKSTART GUIDE
+
+1️⃣ CHOOSE YOUR INSTALLATION METHOD:
+   • Double-click "iRacing-Automation-Setup.bat" (recommended)
+   • OR double-click "iRacing-Automation-Setup.exe" (one-click)
+
+2️⃣ FOLLOW THE PROMPTS:
+   • PowerShell will be installed automatically if missing
+   • Installation finds your programs automatically
+   • Manual path entry available if auto-detection fails
+
+3️⃣ CONFIGURE STREAM DECK:
+   • Browser opens automatically with setup guide
+   • Copy-paste file paths from the guide
+   • Use generated icons from the icons/ folder
+
+📁 GENERATED FILES:
+   • config/programs.json - Your program configuration
+   • shell/*.bat - Stream Deck action files
+   • icons/*.png - Program icons (144x144)
+   • StreamDeckInstructions.html - Setup guide
+
+🔧 TROUBLESHOOTING:
+   • Check logs/ folder for detailed information
+   • Re-run installation if programs are moved
+   • Visit GitHub for support and updates
+
+🌐 SUPPORT:
+   Issues: https://github.com/horat1us/iracing-automation/issues
