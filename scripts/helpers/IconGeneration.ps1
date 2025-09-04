@@ -3,6 +3,9 @@
 
 Add-Type -AssemblyName System.Drawing
 
+# Ensure System.Drawing is loaded for icon overlay operations
+Add-Type -AssemblyName System.Windows.Forms
+
 function Extract-Icon {
     param(
         [string]$ExecutablePath,
@@ -36,8 +39,11 @@ function Add-IconOverlay {
     
     try {
         if (-not (Test-Path $BaseIconPath)) {
+            Write-Log "WARNING: Base icon not found at $BaseIconPath"
             return $false
         }
+        
+        Write-Log "Creating $OverlayType overlay icon from $BaseIconPath to $OutputPath"
         
         # Load the base icon
         $BaseImage = [System.Drawing.Image]::FromFile($BaseIconPath)
@@ -161,20 +167,22 @@ function New-ProgramIcons {
         $IconResults.HasIcon = $true
         
         # Create focus icon with eye overlay
-        $FocusIconPath = Join-Path $IconsDir "$SafeProgramName" + "_focus.png"
+        $FocusFileName = "$SafeProgramName" + "_focus.png"
+        $FocusIconPath = Join-Path $IconsDir $FocusFileName
         $HasFocusIcon = Add-IconOverlay -BaseIconPath $BaseIconPath -OutputPath $FocusIconPath -OverlayType "focus"
         if ($HasFocusIcon) {
             Write-Log "Created focus icon for $($Program.name)"
-            $IconResults.FocusIconPath = "icons\$SafeProgramName" + "_focus.png"
+            $IconResults.FocusIconPath = "icons\$FocusFileName"
             $IconResults.HasFocusIcon = $true
         }
         
         # Create restart icon with circular arrow overlay
-        $RestartIconPath = Join-Path $IconsDir "$SafeProgramName" + "_restart.png"
+        $RestartFileName = "$SafeProgramName" + "_restart.png"
+        $RestartIconPath = Join-Path $IconsDir $RestartFileName
         $HasRestartIcon = Add-IconOverlay -BaseIconPath $BaseIconPath -OutputPath $RestartIconPath -OverlayType "restart"
         if ($HasRestartIcon) {
             Write-Log "Created restart icon for $($Program.name)"
-            $IconResults.RestartIconPath = "icons\$SafeProgramName" + "_restart.png"
+            $IconResults.RestartIconPath = "icons\$RestartFileName"
             $IconResults.HasRestartIcon = $true
         }
     }

@@ -62,6 +62,12 @@ foreach ($Program in $InitConfig.programs) {
             path = $FoundPath
             windowTitle = $Program.windowTitle
         }
+        
+        # Preserve partialMatch property if it exists
+        if ($Program.partialMatch) {
+            $ValidatedProgram.partialMatch = $Program.partialMatch
+        }
+        
         $ValidatedPrograms += $ValidatedProgram
     }
     else {
@@ -90,6 +96,12 @@ foreach ($Program in $InitConfig.programs) {
                                 path = $NewPath
                                 windowTitle = $Program.windowTitle
                             }
+                            
+                            # Preserve partialMatch property if it exists
+                            if ($Program.partialMatch) {
+                                $ValidatedProgram.partialMatch = $Program.partialMatch
+                            }
+                            
                             $ValidatedPrograms += $ValidatedProgram
                             Write-Log "$($Program.name) manually configured at $NewPath"
                             break
