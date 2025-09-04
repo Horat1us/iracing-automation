@@ -175,9 +175,13 @@ function New-ProgramIcons {
         BaseIconPath = $null
         FocusIconPath = $null
         RestartIconPath = $null
+        StartIconPath = $null
+        StopIconPath = $null
         HasIcon = $false
         HasFocusIcon = $false
         HasRestartIcon = $false
+        HasStartIcon = $false
+        HasStopIcon = $false
     }
     
     # Extract base icon from executable
@@ -207,6 +211,26 @@ function New-ProgramIcons {
             Write-Log "Created restart icon for $($Program.name)"
             $IconResults.RestartIconPath = "icons\$RestartFileName"
             $IconResults.HasRestartIcon = $true
+        }
+        
+        # Create start icon with play overlay
+        $StartFileName = "$SafeProgramName" + "_start.png"
+        $StartIconPath = Join-Path $IconsDir $StartFileName
+        $HasStartIcon = Add-IconOverlay -BaseIconPath $BaseIconPath -OutputPath $StartIconPath -OverlayType "start"
+        if ($HasStartIcon) {
+            Write-Log "Created start icon for $($Program.name)"
+            $IconResults.StartIconPath = "icons\$StartFileName"
+            $IconResults.HasStartIcon = $true
+        }
+        
+        # Create stop icon with stop overlay
+        $StopFileName = "$SafeProgramName" + "_stop.png"
+        $StopIconPath = Join-Path $IconsDir $StopFileName
+        $HasStopIcon = Add-IconOverlay -BaseIconPath $BaseIconPath -OutputPath $StopIconPath -OverlayType "stop"
+        if ($HasStopIcon) {
+            Write-Log "Created stop icon for $($Program.name)"
+            $IconResults.StopIconPath = "icons\$StopFileName"
+            $IconResults.HasStopIcon = $true
         }
     }
     

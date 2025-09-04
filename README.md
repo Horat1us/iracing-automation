@@ -14,9 +14,9 @@ iRacing Automation is a comprehensive toolset that simplifies the management of 
 - **One-Click Control** - Start all applications, stop all applications, or manage individual programs
 
 ### 🖥️ **Stream Deck Benefits:**
-- **Visual Button Layout** - Each application gets Focus and Restart buttons with distinctive overlay icons
+- **Visual Button Layout** - Each application gets Focus, Restart, Start, and Stop buttons with distinctive overlay icons
 - **Copy-Paste Setup** - Generated HTML guide with copy buttons for easy Stream Deck configuration  
-- **Color-Coded Actions** - Blue for Focus, Orange for Restart, Green for Start All, Red for Stop All
+- **Color-Coded Actions** - Blue for Focus, Orange for Restart, Green for Start, Red for Stop
 - **Professional Icons** - 72x72 PNG icons with high-contrast overlays optimized for small screens
 
 ### 🔧 **Supported Applications:**
@@ -66,6 +66,8 @@ After installation:
 
 - `StartAllPrograms.ps1` - Launch all configured programs
 - `StopAllPrograms.ps1` - Close all configured programs  
+- `StartProgram.ps1 -ProgramName "Name"` - Launch specific program
+- `StopProgram.ps1 -ProgramName "Name"` - Close specific program
 - `RestartProgram.ps1 -ProgramName "Name"` - Restart specific program
 - `FocusWindow.ps1 -ProgramName "Name"` - Focus specific program window
 

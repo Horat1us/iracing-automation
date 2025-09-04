@@ -173,8 +173,26 @@ function New-StreamDeckHtml {
             "<div class=`"no-icon`">🔄</div>"
         }
         
+        $StartIconHtml = if ($ButtonConfig.HasStartIcon) {
+            "<img src=`"$($ButtonConfig.StartIconPath)`" alt=`"$($ButtonConfig.ProgramName) start icon`">"
+        } elseif ($ButtonConfig.HasIcon) {
+            "<img src=`"$($ButtonConfig.BaseIconPath)`" alt=`"$($ButtonConfig.ProgramName) icon`">"
+        } else {
+            "<div class=`"no-icon`">▶</div>"
+        }
+        
+        $StopIconHtml = if ($ButtonConfig.HasStopIcon) {
+            "<img src=`"$($ButtonConfig.StopIconPath)`" alt=`"$($ButtonConfig.ProgramName) stop icon`">"
+        } elseif ($ButtonConfig.HasIcon) {
+            "<img src=`"$($ButtonConfig.BaseIconPath)`" alt=`"$($ButtonConfig.ProgramName) icon`">"
+        } else {
+            "<div class=`"no-icon`">⏹</div>"
+        }
+        
         $FocusBatPath = $Paths.ProjectRoot + "\" + $ButtonConfig.FocusBat
         $RestartBatPath = $Paths.ProjectRoot + "\" + $ButtonConfig.RestartBat
+        $StartBatPath = $Paths.ProjectRoot + "\" + $ButtonConfig.StartBat
+        $StopBatPath = $Paths.ProjectRoot + "\" + $ButtonConfig.StopBat
         
         # Determine icon paths to display
         $FocusIconDisplayPath = if ($ButtonConfig.HasFocusIcon) {
@@ -191,6 +209,22 @@ function New-StreamDeckHtml {
             $Paths.ProjectRoot + "\" + $ButtonConfig.BaseIconPath
         } else {
             "Use emoji fallback (🔄)"
+        }
+        
+        $StartIconDisplayPath = if ($ButtonConfig.HasStartIcon) {
+            $Paths.ProjectRoot + "\" + $ButtonConfig.StartIconPath
+        } elseif ($ButtonConfig.HasIcon) {
+            $Paths.ProjectRoot + "\" + $ButtonConfig.BaseIconPath
+        } else {
+            "Use emoji fallback (▶)"
+        }
+        
+        $StopIconDisplayPath = if ($ButtonConfig.HasStopIcon) {
+            $Paths.ProjectRoot + "\" + $ButtonConfig.StopIconPath
+        } elseif ($ButtonConfig.HasIcon) {
+            $Paths.ProjectRoot + "\" + $ButtonConfig.BaseIconPath
+        } else {
+            "Use emoji fallback (⏹)"
         }
         
         $HtmlContent += @"
@@ -230,6 +264,40 @@ function New-StreamDeckHtml {
                         </div>
                     </div>
                 </div>
+                
+                <div class="button-info">
+                    $StartIconHtml
+                    <div style="flex-grow: 1;">
+                        <strong>Start Button</strong><br>
+                        <div class="path-container">
+                            <strong>File Path:</strong><br>
+                            <input type="text" class="path-input" value="$StartBatPath" readonly>
+                            <button class="copy-btn" onclick="copyToClipboard(this.previousElementSibling)">📋 Copy</button>
+                        </div>
+                        <div class="path-container">
+                            <strong>Icon Path:</strong><br>
+                            <input type="text" class="path-input" value="$StartIconDisplayPath" readonly>
+                            <button class="copy-btn" onclick="copyToClipboard(this.previousElementSibling)">📋 Copy</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="button-info">
+                    $StopIconHtml
+                    <div style="flex-grow: 1;">
+                        <strong>Stop Button</strong><br>
+                        <div class="path-container">
+                            <strong>File Path:</strong><br>
+                            <input type="text" class="path-input" value="$StopBatPath" readonly>
+                            <button class="copy-btn" onclick="copyToClipboard(this.previousElementSibling)">📋 Copy</button>
+                        </div>
+                        <div class="path-container">
+                            <strong>Icon Path:</strong><br>
+                            <input type="text" class="path-input" value="$StopIconDisplayPath" readonly>
+                            <button class="copy-btn" onclick="copyToClipboard(this.previousElementSibling)">📋 Copy</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 "@
     }
@@ -241,9 +309,11 @@ function New-StreamDeckHtml {
         <ul>
             <li><strong>Focus buttons</strong> - Bring the program window to the foreground (eye overlay icon)</li>
             <li><strong>Restart buttons</strong> - Close and restart the specific program (circular arrow overlay icon)</li>
+            <li><strong>Start buttons</strong> - Launch the specific program (play triangle overlay icon)</li>
+            <li><strong>Stop buttons</strong> - Close the specific program (stop square overlay icon)</li>
             <li><strong>Start All</strong> - Launch all configured programs at once (play triangle overlay)</li>
             <li><strong>Stop All</strong> - Close all configured programs (stop square overlay)</li>
-            <li><strong>Icon generation</strong> - Base icons are extracted from executables, then focus and restart variants are created with visual overlays</li>
+            <li><strong>Icon generation</strong> - Base icons are extracted from executables, then action variants are created with visual overlays</li>
             <li><strong>Overlay symbols</strong> - Eye (👁) for focus, circular arrow (🔄) for restart, play (▶) for start, stop (⏹) for stop</li>
             <li>All bat files use absolute paths and will work regardless of current directory</li>
         </ul>

@@ -209,6 +209,7 @@ Write-Log "Generated: StopAll.bat"
 # Extract icons and generate individual program bat files
 $ButtonConfigs = @()
 $IRacingIconPath = $null
+$GeneratedBatFiles = 2  # Start with StartAll.bat and StopAll.bat
 
 foreach ($Program in $ValidatedPrograms) {
     $SafeProgramName = $Program.name -replace '[^a-zA-Z0-9]', '_'
@@ -230,6 +231,7 @@ powershell.exe -ExecutionPolicy Bypass -File "FocusWindow.ps1" -ProgramName "$($
     $FocusPath = Join-Path $ShellDir "Focus_$SafeProgramName.bat"
     $FocusContent | Set-Content $FocusPath
     Write-Log "Generated: Focus_$SafeProgramName.bat"
+    $GeneratedBatFiles++
     
     # Generate Restart bat file
     $RestartContent = @"
@@ -240,6 +242,30 @@ powershell.exe -ExecutionPolicy Bypass -File "RestartProgram.ps1" -ProgramName "
     $RestartPath = Join-Path $ShellDir "Restart_$SafeProgramName.bat"
     $RestartContent | Set-Content $RestartPath
     Write-Log "Generated: Restart_$SafeProgramName.bat"
+    $GeneratedBatFiles++
+    
+    # Generate Start bat file
+    $StartContent = @"
+@echo off
+cd /d "$ScriptsDir"
+start /b powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File "StartProgram.ps1" -ProgramName "$($Program.name)" -NoWait
+exit
+"@
+    $StartPath = Join-Path $ShellDir "Start_$SafeProgramName.bat"
+    $StartContent | Set-Content $StartPath
+    Write-Log "Generated: Start_$SafeProgramName.bat"
+    $GeneratedBatFiles++
+    
+    # Generate Stop bat file
+    $StopContent = @"
+@echo off
+cd /d "$ScriptsDir"
+powershell.exe -ExecutionPolicy Bypass -File "StopProgram.ps1" -ProgramName "$($Program.name)"
+"@
+    $StopPath = Join-Path $ShellDir "Stop_$SafeProgramName.bat"
+    $StopContent | Set-Content $StopPath
+    Write-Log "Generated: Stop_$SafeProgramName.bat"
+    $GeneratedBatFiles++
     
     # Store button configuration for HTML generation
     $ButtonConfigs += @{
@@ -249,10 +275,16 @@ powershell.exe -ExecutionPolicy Bypass -File "RestartProgram.ps1" -ProgramName "
         BaseIconPath = $IconResults.BaseIconPath
         FocusIconPath = $IconResults.FocusIconPath
         RestartIconPath = $IconResults.RestartIconPath
+        StartIconPath = $IconResults.StartIconPath
+        StopIconPath = $IconResults.StopIconPath
         HasFocusIcon = $IconResults.HasFocusIcon
         HasRestartIcon = $IconResults.HasRestartIcon
+        HasStartIcon = $IconResults.HasStartIcon
+        HasStopIcon = $IconResults.HasStopIcon
         FocusBat = "shell\Focus_$SafeProgramName.bat"
         RestartBat = "shell\Restart_$SafeProgramName.bat"
+        StartBat = "shell\Start_$SafeProgramName.bat"
+        StopBat = "shell\Stop_$SafeProgramName.bat"
     }
 }
 
@@ -281,7 +313,7 @@ catch {
 Write-Log "Installation completed successfully!"
 Write-Log "Configuration saved to: $($Paths.ConfigPath)"
 Write-Log "Found and configured $($ValidatedPrograms.Count) programs"
-Write-Log "Generated $((2 * $ValidatedPrograms.Count) + 2) bat files for Stream Deck"
+Write-Log "Generated $GeneratedBatFiles bat files for Stream Deck"
 Write-Log "Extracted $($ButtonConfigs.Count) program icons (72x72 PNG)"
 Write-Log ""
 Write-Log "Installation summary:"
