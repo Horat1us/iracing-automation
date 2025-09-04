@@ -1,6 +1,16 @@
 {
   "programs": [
     {
+      "name": "iRacing",
+      "executableName": "iRacingUI.exe",
+      "paths": [
+        "C:\\Program Files (x86)\\iRacing\\ui\\iRacingUI.exe",
+        "C:\\Program Files\\iRacing\\ui\\iRacingUI.exe",
+        "C:\\Users\\{USERNAME}\\AppData\\Local\\iRacing\\ui\\iRacingUI.exe"
+      ],
+      "windowTitle": "iRacing"
+    },
+    {
       "name": "MarvinsAIRA",
       "executableName": "MarvinsAIRA.exe",
       "paths": [
@@ -25,7 +35,7 @@
       "paths": [
         "C:\\Users\\{USERNAME}\\AppData\\Local\\racelabapps\\RacelabApps.exe"
       ],
-      "windowTitle": "Racelab Apps"
+      "windowTitle": "Racelab"
     },
     {
       "name": "CrewChiefV4",
