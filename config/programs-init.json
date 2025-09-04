@@ -18,7 +18,8 @@
         "C:\\Users\\{USERNAME}\\AppData\\Local\\Programs\\MarvinsAIRA\\MarvinsAIRA.exe",
         "C:\\Program Files (x86)\\MarvinsAIRA\\MarvinsAIRA.exe"
       ],
-      "windowTitle": "MarvinsAIRA"
+      "windowTitle": "Marvin's Awesome iRacing App",
+      "partialMatch": true
     },
     {
       "name": "TradingPaints",
@@ -45,7 +46,8 @@
         "C:\\Users\\{USERNAME}\\AppData\\Local\\Programs\\Britton IT Ltd\\CrewChiefV4\\CrewChiefV4.exe",
         "C:\\Program Files\\Britton IT Ltd\\CrewChiefV4\\CrewChiefV4.exe"
       ],
-      "windowTitle": "Crew Chief v4"
+      "windowTitle": "Crew Chief",
+      "partialMatch": true
     }
   ]
 }

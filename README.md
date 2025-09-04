@@ -73,6 +73,31 @@ When adding new programs to `config/programs-init.json`, follow these guidelines
 - **AppData\\Local\\Programs**: For user-specific installations
 - **{USERNAME}**: Will be automatically replaced with the actual Windows username during installation
 
+### Window Title Configuration
+Some programs have dynamic window titles that include variable information like version numbers or status. For these programs, use partial matching:
+
+#### Programs with Dynamic Window Titles:
+- **Crew Chief**: Title changes to "Crew Chief - Active Profile: defaultSettings - Running iRacing"
+- **MarvinsAIRA**: Title changes to "Marvin's Awesome iRacing App 1.13.0.0.0" (includes version)
+
+#### Partial Matching Example:
+```json
+{
+  "name": "CrewChiefV4",
+  "executableName": "CrewChiefV4.exe",
+  "paths": [
+    "C:\\Program Files (x86)\\Britton IT Ltd\\CrewChiefV4\\CrewChiefV4.exe"
+  ],
+  "windowTitle": "Crew Chief",
+  "partialMatch": true
+}
+```
+
+#### Window Title Guidelines:
+- **Exact matching** (default): Use the complete window title for programs with static titles
+- **Partial matching**: Set `"partialMatch": true` and use only the beginning portion of the title that doesn't change
+- **Focus functionality**: The `FocusWindow.ps1` script will find windows that start with the specified title when `partialMatch` is enabled
+
 ## Requirements
 
 - Windows PowerShell 5.1 or PowerShell Core

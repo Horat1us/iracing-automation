@@ -66,6 +66,7 @@ foreach ($Program in $InitConfig.programs) {
     }
     else {
         Write-Log "WARNING: $($Program.name) not found at any expected paths"
+        # Show interactive error message to user (not logged)
         Write-Host ""
         Write-Host "Program '$($Program.name)' not found at any expected paths:"
         foreach ($TestPath in $PathsToCheck) {
@@ -258,11 +259,10 @@ try {
     # Use Start-Process with -PassThru to capture the process and avoid blocking
     $BrowserProcess = Start-Process -FilePath $HtmlPath -PassThru -ErrorAction Stop
     Write-Log "Successfully opened StreamDeckInstructions.html in browser"
-    Write-Host "StreamDeckInstructions.html opened in your default browser."
 }
 catch {
     Write-Log "WARNING: Could not open browser automatically: $($_.Exception.Message)"
-    Write-Host "Could not open browser automatically. Please manually open: $HtmlPath"
+    Write-Log "Please manually open: $HtmlPath"
 }
 
 Write-Log "Installation completed successfully!"
@@ -270,14 +270,13 @@ Write-Log "Configuration saved to: $($Paths.ConfigPath)"
 Write-Log "Found and configured $($ValidatedPrograms.Count) programs"
 Write-Log "Generated $((2 * $ValidatedPrograms.Count) + 2) bat files for Stream Deck"
 Write-Log "Extracted $($ButtonConfigs.Count) program icons (72x72 PNG)"
-
-Write-Host ""
-Write-Host "Installation completed!"
-Write-Host "- Generated bat files in shell/ directory"
-Write-Host "- Extracted program icons to icons/ directory"
-Write-Host "- Created StreamDeckInstructions.html with setup guide"
-Write-Host "- Generated StartAll and StopAll icons with overlays"
-Write-Host ""
-Write-Host "Next steps:"
-Write-Host "- Follow the setup instructions in the browser window that should have opened"
-Write-Host "- If the browser didn't open automatically, manually open: StreamDeckInstructions.html"
+Write-Log ""
+Write-Log "Installation summary:"
+Write-Log "- Generated bat files in shell/ directory"
+Write-Log "- Extracted program icons to icons/ directory" 
+Write-Log "- Created StreamDeckInstructions.html with setup guide"
+Write-Log "- Generated StartAll and StopAll icons with overlays"
+Write-Log ""
+Write-Log "Next steps:"
+Write-Log "- Follow the setup instructions in the browser window that should have opened"
+Write-Log "- If the browser didn't open automatically, manually open: StreamDeckInstructions.html"
