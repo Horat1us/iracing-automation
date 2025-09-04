@@ -13,7 +13,7 @@ function New-GlobalBatchFiles {
     $StartAllContent = @"
 @echo off
 cd /d "$ScriptsDir"
-start "" powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File "StartAllPrograms.ps1"
+powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -Command "& { Start-Process powershell.exe -ArgumentList '-WindowStyle Hidden -ExecutionPolicy Bypass -File `"StartAllPrograms.ps1`"' -WindowStyle Hidden }"
 "@
     $StartAllPath = Join-Path $ShellDir "StartAll.bat"
     $StartAllContent | Set-Content $StartAllPath
@@ -59,7 +59,7 @@ powershell.exe -ExecutionPolicy Bypass -File "FocusWindow.ps1" -ProgramName "$($
     $RestartContent = @"
 @echo off
 cd /d "$ScriptsDir"
-powershell.exe -ExecutionPolicy Bypass -File "RestartProgram.ps1" -ProgramName "$($Program.name)"
+powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -Command "& { Start-Process powershell.exe -ArgumentList '-WindowStyle Hidden -ExecutionPolicy Bypass -File `"RestartProgram.ps1`" -ProgramName `"$($Program.name)`"' -WindowStyle Hidden }"
 "@
     $RestartPath = Join-Path $ShellDir "Restart_$SafeProgramName.bat"
     $RestartContent | Set-Content $RestartPath
@@ -70,7 +70,7 @@ powershell.exe -ExecutionPolicy Bypass -File "RestartProgram.ps1" -ProgramName "
     $StartContent = @"
 @echo off
 cd /d "$ScriptsDir"
-start "" powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File "StartProgram.ps1" -ProgramName "$($Program.name)"
+powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -Command "& { Start-Process powershell.exe -ArgumentList '-WindowStyle Hidden -ExecutionPolicy Bypass -File `"StartProgram.ps1`" -ProgramName `"$($Program.name)`"' -WindowStyle Hidden }"
 "@
     $StartPath = Join-Path $ShellDir "Start_$SafeProgramName.bat"
     $StartContent | Set-Content $StartPath
