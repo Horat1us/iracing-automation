@@ -12,16 +12,19 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+      with:
+        fetch-depth: 0  # Fetch full history
+        fetch-tags: true  # Fetch all tags
+
     - name: Extract version from tag
       id: version
       shell: bash
       run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-      
+
     - name: Install ps2exe
       shell: powershell
       run: Install-Module -Name ps2exe -Force -Scope CurrentUser -AllowPrerelease
-        
+
     - name: Build release package
       shell: powershell
       run: |
@@ -29,7 +32,7 @@ jobs:
         $releaseDir = "iRacing-Automation-$version"
         
         .\release\build-release.ps1 -Version $version -ReleaseDir $releaseDir
-        
+
     - name: Compile EXE
       shell: powershell
       run: |
@@ -52,7 +55,7 @@ jobs:
                -requireAdmin $false
                
         Write-Host "✅ EXE compiled successfully"
-        
+
     - name: Create release ZIP
       shell: powershell
       run: |
@@ -62,13 +65,13 @@ jobs:
         
         Compress-Archive -Path $releaseDir -DestinationPath $zipFile -Force
         Write-Host "✅ Release package created: $zipFile"
-        
+
     - name: Generate release notes
       shell: powershell
       run: |
         $version = "${{ steps.version.outputs.VERSION }}"
         .\release\generate-release-notes.ps1 -Version $version -OutputFile "release_notes.md"
-        
+
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
