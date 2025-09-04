@@ -38,5 +38,5 @@ Write-Host "Release directory structure created successfully"
 Write-Host "`n📦 Package contents:"
 Get-ChildItem -Path $ReleaseDir -Recurse | ForEach-Object {
     $relativePath = $_.FullName.Replace((Resolve-Path $ReleaseDir).Path, '')
-    Write-Host "  $($relativePath)"
+    Write-Host ("  " + $relativePath)
 }
