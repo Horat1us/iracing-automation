@@ -24,18 +24,9 @@ jobs:
       shell: bash
       run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
-    - name: Cache ps2exe module
-      uses: actions/cache@v4
-      id: cache-ps2exe
-      with:
-        path: C:\Users\runneradmin\Documents\PowerShell\Modules\ps2exe
-        key: ps2exe-module-v1
-        
     - name: Install ps2exe
-      if: steps.cache-ps2exe.outputs.cache-hit != 'true'
       shell: powershell
       run: |
-        Write-Host "Cache miss - Installing ps2exe module..."
         Install-Module -Name ps2exe -Force -Scope CurrentUser -AllowPrerelease
         
     - name: Verify ps2exe
