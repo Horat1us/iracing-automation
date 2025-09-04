@@ -16,7 +16,7 @@ function Extract-Icon {
         $Icon = [System.Drawing.Icon]::ExtractAssociatedIcon($ExecutablePath)
         if ($Icon) {
             $Bitmap = $Icon.ToBitmap()
-            $ResizedBitmap = New-Object System.Drawing.Bitmap($Bitmap, 72, 72)
+            $ResizedBitmap = New-Object System.Drawing.Bitmap($Bitmap, 144, 144)
             $ResizedBitmap.Save($OutputPath, [System.Drawing.Imaging.ImageFormat]::Png)
             $ResizedBitmap.Dispose()
             $Bitmap.Dispose()

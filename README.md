@@ -17,7 +17,7 @@ iRacing Automation is a comprehensive toolset that simplifies the management of 
 - **Visual Button Layout** - Each application gets Focus, Restart, Start, and Stop buttons with distinctive overlay icons
 - **Copy-Paste Setup** - Generated HTML guide with copy buttons for easy Stream Deck configuration  
 - **Color-Coded Actions** - Blue for Focus, Orange for Restart, Green for Start, Red for Stop
-- **Professional Icons** - 72x72 PNG icons with high-contrast overlays optimized for small screens
+- **Professional Icons** - 144x144 PNG icons with high-contrast overlays optimized for high-resolution displays
 
 ### 🔧 **Supported Applications:**
 - **iRacing UI** - The main simulator interface
@@ -50,7 +50,7 @@ iRacing Automation is a comprehensive toolset that simplifies the management of 
 - Prompts for manual path correction if programs aren't found
 - Allows adding additional programs interactively
 - Generates bat files for Stream Deck integration
-- Extracts 72x72 PNG icons from program executables
+- Extracts 144x144 PNG icons from program executables
 - Creates HTML setup guide with absolute paths
 
 ## Generated Files
@@ -58,7 +58,7 @@ iRacing Automation is a comprehensive toolset that simplifies the management of 
 After installation:
 - `config/programs.json` - Your validated program configuration
 - `shell/*.bat` - Stream Deck action files with absolute paths
-- `icons/*.png` - Extracted program icons (72x72)
+- `icons/*.png` - Extracted program icons (144x144)
 - `StreamDeckInstructions.html` - Visual setup guide
 - `logs/install_*.log` - Installation log
 
