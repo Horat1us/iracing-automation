@@ -28,14 +28,6 @@ jobs:
       shell: powershell
       run: |
         Install-Module -Name ps2exe -Force -Scope CurrentUser -AllowPrerelease
-        
-    - name: Verify ps2exe
-      shell: powershell
-      run: |
-        if (steps.cache-ps2exe.outputs.cache-hit -eq 'true') {
-          Write-Host "ps2exe loaded from cache"
-        }
-        Get-Module -ListAvailable -Name ps2exe | Format-Table Name, Version, Path
 
     - name: Build release package
       shell: powershell
