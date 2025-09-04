@@ -23,7 +23,7 @@ if (-not $Program) {
 }
 
 # Closing program
-$ExecutableName = Get-ExecutableNameFromPaths -Paths $Program.paths
+$ExecutableName = Get-ExecutableNameFromPath -Path $Program.path
 $ProcessName = $ExecutableName.Replace('.exe', '')
 $Process = Get-Process -Name $ProcessName -ErrorAction SilentlyContinue
 

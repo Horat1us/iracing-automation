@@ -23,7 +23,7 @@ if (-not $Program) {
 }
 
 # Check if program is already running
-$ExecutableName = Get-ExecutableNameFromPaths -Paths $Program.paths
+$ExecutableName = Get-ExecutableNameFromPath -Path $Program.path
 $ProcessName = $ExecutableName.Replace('.exe', '')
 $Process = Get-Process -Name $ProcessName -ErrorAction SilentlyContinue
 

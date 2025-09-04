@@ -16,7 +16,7 @@ foreach ($Program in $Config.programs) {
     Write-Log "Checking status: $($Program.name)"
 
     # Проверяем, запущена ли программа
-    $ExecutableName = Get-ExecutableNameFromPaths -Paths $Program.paths
+    $ExecutableName = Get-ExecutableNameFromPath -Path $Program.path
     $Process = Get-Process -Name $ExecutableName.Replace('.exe', '') -ErrorAction SilentlyContinue
 
     if ($Process) {

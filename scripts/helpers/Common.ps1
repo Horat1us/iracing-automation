@@ -46,6 +46,19 @@ function Get-ProgramsConfig {
     return Get-Content $ConfigPath | ConvertFrom-Json
 }
 
+function Get-ExecutableNameFromPath {
+    param([string]$Path)
+    
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        throw "No path provided"
+    }
+    
+    # Extract the executable name from the path
+    $ExecutableName = Split-Path -Leaf $Path
+    
+    return $ExecutableName
+}
+
 function Get-ExecutableNameFromPaths {
     param([array]$Paths)
     
