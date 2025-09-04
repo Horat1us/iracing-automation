@@ -53,22 +53,45 @@ function Add-IconOverlay {
         # Draw the base image
         $Graphics.DrawImage($BaseImage, 0, 0)
         
-        # Set up overlay properties
-        $OverlaySize = [int]($BaseImage.Width * 0.4)  # 40% of icon size
-        $OverlayX = $BaseImage.Width - $OverlaySize - 2
-        $OverlayY = $BaseImage.Height - $OverlaySize - 2
+        # Set up overlay properties - larger for Stream Deck visibility
+        $OverlaySize = [int]($BaseImage.Width * 0.6)  # 60% of icon size (was 40%)
+        $OverlayX = $BaseImage.Width - $OverlaySize - 1
+        $OverlayY = $BaseImage.Height - $OverlaySize - 1
         
-        # Create overlay background circle
-        $OverlayBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(200, 255, 255, 255))
+        # Create overlay background circle with distinctive colors per overlay type
+        switch ($OverlayType) {
+            "focus" {
+                # Blue background for focus
+                $OverlayBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(220, 65, 105, 225))  # Royal Blue
+                $BorderPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 255, 255, 255), 2)  # White border
+                $SymbolPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 255, 255, 255), 3)  # White symbol
+                $SymbolBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(255, 255, 255, 255))  # White fill
+            }
+            "restart" {
+                # Orange background for restart
+                $OverlayBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(220, 255, 140, 0))  # Dark Orange
+                $BorderPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 255, 255, 255), 2)  # White border
+                $SymbolPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 255, 255, 255), 3)  # White symbol
+                $SymbolBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(255, 255, 255, 255))  # White fill
+            }
+            "start" {
+                # Green background for start
+                $OverlayBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(220, 34, 139, 34))  # Forest Green
+                $BorderPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 255, 255, 255), 2)  # White border
+                $SymbolPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 255, 255, 255), 3)  # White symbol
+                $SymbolBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(255, 255, 255, 255))  # White fill
+            }
+            "stop" {
+                # Red background for stop
+                $OverlayBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(220, 220, 20, 60))  # Crimson
+                $BorderPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 255, 255, 255), 2)  # White border
+                $SymbolPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 255, 255, 255), 3)  # White symbol
+                $SymbolBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(255, 255, 255, 255))  # White fill
+            }
+        }
+        
         $Graphics.FillEllipse($OverlayBrush, $OverlayX, $OverlayY, $OverlaySize, $OverlaySize)
-        
-        # Draw overlay border
-        $BorderPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(150, 0, 0, 0), 1)
         $Graphics.DrawEllipse($BorderPen, $OverlayX, $OverlayY, $OverlaySize, $OverlaySize)
-        
-        # Draw overlay symbol
-        $SymbolPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(200, 0, 0, 0), 2)
-        $SymbolBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(200, 0, 0, 0))
         
         $CenterX = $OverlayX + ($OverlaySize / 2)
         $CenterY = $OverlayY + ($OverlaySize / 2)
