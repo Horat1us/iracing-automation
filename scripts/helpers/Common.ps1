@@ -26,6 +26,12 @@ function Get-ProjectPaths {
 function Initialize-Logging {
     param([string]$LogFile)
     
+    # Ensure the log directory exists
+    $LogDir = Split-Path -Parent $LogFile
+    if (-not (Test-Path $LogDir)) {
+        New-Item -ItemType Directory -Path $LogDir -Force | Out-Null
+    }
+    
     $global:CurrentLogFile = $LogFile
     
     function global:Write-Log {

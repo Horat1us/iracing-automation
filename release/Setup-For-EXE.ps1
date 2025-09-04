@@ -97,7 +97,7 @@ try {
     }
     
     # Execute installation script
-    $process = Start-Process -FilePath $psCheck.Command -ArgumentList "-ExecutionPolicy Bypass", "-NoProfile", "-File", "`"$scriptPath`"" -Wait -PassThru -WindowStyle Normal
+    $process = Start-Process -FilePath $psCheck.Command -ArgumentList "-ExecutionPolicy RemoteSigned", "-NoProfile", "-File", "`"$scriptPath`"" -Wait -PassThru -WindowStyle Normal
     
     if ($process.ExitCode -eq 0) {
         Show-MessageBox "iRacing Automation installation completed successfully!" "Installation Complete"

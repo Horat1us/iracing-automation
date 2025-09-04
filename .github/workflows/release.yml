@@ -71,7 +71,9 @@ jobs:
                -copyright "MIT License" `
                -version $numericVersion `
                -noConsole `
-               -requireAdmin $false
+               -requireAdmin $false `
+               -supportOS `
+               -longPaths
                
         Write-Host "✅ EXE compiled successfully"
 
