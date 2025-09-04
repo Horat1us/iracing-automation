@@ -1,17 +1,25 @@
 function Get-ProjectPaths {
     param([string]$ScriptName = "common")
     
+    # Get the directory of the calling script
     $CallerScript = Get-PSCallStack | Select-Object -Skip 1 -First 1
-    $ScriptDir = Split-Path -Parent $CallerScript.ScriptName
+    if ($CallerScript.ScriptName) {
+        $ScriptDir = Split-Path -Parent $CallerScript.ScriptName
+    } else {
+        $ScriptDir = $PSScriptRoot
+    }
     $ProjectRoot = Split-Path -Parent $ScriptDir
     
-    $LogFileName = "$ScriptName" + "_" + (Get-Date -Format 'yyyyMMdd_HHmmss') + ".log"
+    # Build log file name safely
+    $LogFileName = $ScriptName + "_" + (Get-Date -Format 'yyyyMMdd_HHmmss') + ".log"
+    $LogsDir = Join-Path $ProjectRoot "logs"
+    $ConfigDir = Join-Path $ProjectRoot "config"
     
     return @{
         ScriptDir = $ScriptDir
         ProjectRoot = $ProjectRoot
-        LogFile = Join-Path $ProjectRoot (Join-Path "logs" $LogFileName)
-        ConfigPath = Join-Path $ProjectRoot (Join-Path "config" "programs.json")
+        LogFile = Join-Path $LogsDir $LogFileName
+        ConfigPath = Join-Path $ConfigDir "programs.json"
     }
 }
 

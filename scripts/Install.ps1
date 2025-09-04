@@ -31,15 +31,41 @@ Write-Log "Validating program paths from initial configuration..."
 foreach ($Program in $InitConfig.programs) {
     Write-Log "Checking $($Program.name)..."
     
-    if (Test-Path $Program.path) {
-        Write-Log "$($Program.name) found at $($Program.path)"
-        $ValidatedPrograms += $Program
+    $FoundPath = $null
+    $CurrentUsername = $env:USERNAME
+    
+    # Handle both single path (legacy) and multiple paths
+    $PathsToCheck = if ($Program.paths) { $Program.paths } else { @($Program.path) }
+    
+    foreach ($TestPath in $PathsToCheck) {
+        # Replace {USERNAME} placeholder with current username
+        $ResolvedPath = $TestPath -replace '\{USERNAME\}', $CurrentUsername
+        
+        if (Test-Path $ResolvedPath) {
+            $FoundPath = $ResolvedPath
+            Write-Log "$($Program.name) found at $ResolvedPath"
+            break
+        }
+    }
+    
+    if ($FoundPath) {
+        # Create program object with single validated path
+        $ValidatedProgram = @{
+            name = $Program.name
+            executableName = $Program.executableName
+            path = $FoundPath
+            windowTitle = $Program.windowTitle
+        }
+        $ValidatedPrograms += $ValidatedProgram
     }
     else {
-        Write-Log "WARNING: $($Program.name) not found at $($Program.path)"
+        Write-Log "WARNING: $($Program.name) not found at any expected paths"
         Write-Host ""
-        Write-Host "Program '$($Program.name)' not found at expected path:"
-        Write-Host "  Expected: $($Program.path)"
+        Write-Host "Program '$($Program.name)' not found at any expected paths:"
+        foreach ($TestPath in $PathsToCheck) {
+            $ResolvedPath = $TestPath -replace '\{USERNAME\}', $CurrentUsername
+            Write-Host "  Tried: $ResolvedPath"
+        }
         Write-Host ""
         
         do {
@@ -51,8 +77,13 @@ foreach ($Program in $InitConfig.programs) {
                     do {
                         $NewPath = Read-Host "Enter correct path to $($Program.executableName)"
                         if (Test-Path $NewPath) {
-                            $Program.path = $NewPath
-                            $ValidatedPrograms += $Program
+                            $ValidatedProgram = @{
+                                name = $Program.name
+                                executableName = $Program.executableName
+                                path = $NewPath
+                                windowTitle = $Program.windowTitle
+                            }
+                            $ValidatedPrograms += $ValidatedProgram
                             Write-Log "$($Program.name) manually configured at $NewPath"
                             break
                         }

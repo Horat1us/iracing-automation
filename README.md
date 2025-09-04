@@ -44,6 +44,35 @@ After installation:
 - `RestartProgram.ps1 -ProgramName "Name"` - Restart specific program
 - `FocusWindow.ps1 -ProgramName "Name"` - Focus specific program window
 
+## Contributing - Configuring programs-init.json
+
+When adding new programs to `config/programs-init.json`, follow these guidelines:
+
+### Path Configuration
+- **Multiple paths**: Include all common installation locations for the program
+- **Username placeholder**: Use `{USERNAME}` as a placeholder for the Windows username
+- **Path priority**: List paths in order of likelihood (most common first)
+
+### Example program entry:
+```json
+{
+  "name": "YourProgram",
+  "executableName": "YourProgram.exe",
+  "paths": [
+    "C:\\Program Files\\YourProgram\\YourProgram.exe",
+    "C:\\Users\\{USERNAME}\\AppData\\Local\\Programs\\YourProgram\\YourProgram.exe",
+    "C:\\Program Files (x86)\\YourProgram\\YourProgram.exe"
+  ],
+  "windowTitle": "Your Program Window Title"
+}
+```
+
+### Path Guidelines:
+- **Program Files**: For system-wide installations
+- **Program Files (x86)**: For 32-bit programs on 64-bit systems
+- **AppData\\Local\\Programs**: For user-specific installations
+- **{USERNAME}**: Will be automatically replaced with the actual Windows username during installation
+
 ## Requirements
 
 - Windows PowerShell 5.1 or PowerShell Core

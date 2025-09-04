@@ -3,25 +3,38 @@
     {
       "name": "MarvinsAIRA",
       "executableName": "MarvinsAIRA.exe",
-      "path": "C:\\Program Files\\MarvinsAIRA\\MarvinsAIRA.exe",
+      "paths": [
+        "C:\\Program Files\\MarvinsAIRA\\MarvinsAIRA.exe",
+        "C:\\Users\\{USERNAME}\\AppData\\Local\\Programs\\MarvinsAIRA\\MarvinsAIRA.exe",
+        "C:\\Program Files (x86)\\MarvinsAIRA\\MarvinsAIRA.exe"
+      ],
       "windowTitle": "MarvinsAIRA"
     },
     {
       "name": "TradingPaints",
       "executableName": "TradingPaints.exe",
-      "path": "C:\\Program Files\\Trading Paints\\TradingPaints.exe",
+      "paths": [
+        "C:\\Program Files (x86)\\Rhinode LLC\\Trading Paints\\Trading Paints.exe",
+        "C:\\Program Files\\Rhinode LLC\\Trading Paints\\Trading Paints.exe"
+      ],
       "windowTitle": "Trading Paints"
     },
     {
       "name": "RacelabApps",
       "executableName": "RacelabApps.exe",
-      "path": "C:\\Program Files\\Racelab Apps\\RacelabApps.exe",
+      "paths": [
+        "C:\\Users\\{USERNAME}\\AppData\\Local\\racelabapps\\RacelabApps.exe"
+      ],
       "windowTitle": "Racelab Apps"
     },
     {
       "name": "CrewChiefV4",
       "executableName": "CrewChiefV4.exe",
-      "path": "C:\\Program Files\\Britton IT Ltd\\CrewChiefV4\\CrewChiefV4.exe",
+      "paths": [
+        "C:\\Program Files (x86)\\Britton IT Ltd\\CrewChiefV4\\CrewChiefV4.exe",
+        "C:\\Users\\{USERNAME}\\AppData\\Local\\Programs\\Britton IT Ltd\\CrewChiefV4\\CrewChiefV4.exe",
+        "C:\\Program Files\\Britton IT Ltd\\CrewChiefV4\\CrewChiefV4.exe"
+      ],
       "windowTitle": "Crew Chief v4"
     }
   ]
