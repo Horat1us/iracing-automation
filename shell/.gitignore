@@ -1,2 +1,6 @@
-!.gitignore
+# Ignore all generated batch files
+*.bat
+
+# Ignore all files in this directory except this .gitignore
 *
+!.gitignore
