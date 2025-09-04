@@ -1,6 +1,31 @@
 # iRacing Automation
 
-Automation tools for managing iRacing-related applications with Stream Deck integration.
+**Streamline your iRacing experience with automated application management and professional Stream Deck integration.**
+
+## What This Project Does
+
+iRacing Automation is a comprehensive toolset that simplifies the management of all your iRacing-related applications through a single, automated workflow. Instead of manually launching each program every time you race, this project:
+
+### 🎯 **Core Features:**
+- **Automated Application Discovery** - Scans your system for iRacing applications and validates installation paths
+- **Professional Icon Generation** - Extracts program icons and creates color-coded overlay variants for different actions
+- **Stream Deck Integration** - Generates ready-to-use batch files and provides visual setup instructions
+- **Smart Window Management** - Handles programs with dynamic window titles (like Crew Chief and MarvinsAIRA)
+- **One-Click Control** - Start all applications, stop all applications, or manage individual programs
+
+### 🖥️ **Stream Deck Benefits:**
+- **Visual Button Layout** - Each application gets Focus and Restart buttons with distinctive overlay icons
+- **Copy-Paste Setup** - Generated HTML guide with copy buttons for easy Stream Deck configuration  
+- **Color-Coded Actions** - Blue for Focus, Orange for Restart, Green for Start All, Red for Stop All
+- **Professional Icons** - 72x72 PNG icons with high-contrast overlays optimized for small screens
+
+### 🔧 **Supported Applications:**
+- **iRacing UI** - The main simulator interface
+- **Crew Chief** - Voice spotter and race engineer
+- **MarvinsAIRA** - AI-powered race assistant  
+- **Trading Paints** - Custom car livery manager
+- **Racelab Apps** - Telemetry and race analysis tools
+- **+ Any additional applications** you want to include
 
 ## Quick Start
 
