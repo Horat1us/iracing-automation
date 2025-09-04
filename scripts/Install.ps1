@@ -5,6 +5,7 @@
 . (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Definition) "helpers\Common.ps1")
 . (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Definition) "helpers\IconGeneration.ps1")
 . (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Definition) "helpers\HtmlGeneration.ps1")
+. (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Definition) "helpers\BatchGeneration.ps1")
 
 # Initialize paths and logging
 $Paths = Get-ProjectPaths -ScriptName "install"
@@ -185,31 +186,12 @@ if (-not (Test-Path $IconsDir)) {
 
 $ScriptsDir = Join-Path $Paths.ProjectRoot "scripts"
 
-# Generate StartAll.bat
-$StartAllContent = @"
-@echo off
-cd /d "$ScriptsDir"
-start /b powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File "StartAllPrograms.ps1" -NoWait
-exit
-"@
-$StartAllPath = Join-Path $ShellDir "StartAll.bat"
-$StartAllContent | Set-Content $StartAllPath
-Write-Log "Generated: StartAll.bat"
-
-# Generate StopAll.bat
-$StopAllContent = @"
-@echo off
-cd /d "$ScriptsDir"
-powershell.exe -ExecutionPolicy Bypass -File "StopAllPrograms.ps1"
-"@
-$StopAllPath = Join-Path $ShellDir "StopAll.bat"
-$StopAllContent | Set-Content $StopAllPath
-Write-Log "Generated: StopAll.bat"
+# Generate global batch files using helper function
+$GeneratedBatFiles = New-GlobalBatchFiles -ShellDir $ShellDir -ScriptsDir $ScriptsDir
 
 # Extract icons and generate individual program bat files
 $ButtonConfigs = @()
 $IRacingIconPath = $null
-$GeneratedBatFiles = 2  # Start with StartAll.bat and StopAll.bat
 
 foreach ($Program in $ValidatedPrograms) {
     $SafeProgramName = $Program.name -replace '[^a-zA-Z0-9]', '_'
@@ -222,50 +204,9 @@ foreach ($Program in $ValidatedPrograms) {
         $IRacingIconPath = Join-Path $IconsDir "$SafeProgramName.png"
     }
     
-    # Generate Focus bat file
-    $FocusContent = @"
-@echo off
-cd /d "$ScriptsDir"
-powershell.exe -ExecutionPolicy Bypass -File "FocusWindow.ps1" -ProgramName "$($Program.name)"
-"@
-    $FocusPath = Join-Path $ShellDir "Focus_$SafeProgramName.bat"
-    $FocusContent | Set-Content $FocusPath
-    Write-Log "Generated: Focus_$SafeProgramName.bat"
-    $GeneratedBatFiles++
-    
-    # Generate Restart bat file
-    $RestartContent = @"
-@echo off
-cd /d "$ScriptsDir"
-powershell.exe -ExecutionPolicy Bypass -File "RestartProgram.ps1" -ProgramName "$($Program.name)"
-"@
-    $RestartPath = Join-Path $ShellDir "Restart_$SafeProgramName.bat"
-    $RestartContent | Set-Content $RestartPath
-    Write-Log "Generated: Restart_$SafeProgramName.bat"
-    $GeneratedBatFiles++
-    
-    # Generate Start bat file
-    $StartContent = @"
-@echo off
-cd /d "$ScriptsDir"
-start /b powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File "StartProgram.ps1" -ProgramName "$($Program.name)" -NoWait
-exit
-"@
-    $StartPath = Join-Path $ShellDir "Start_$SafeProgramName.bat"
-    $StartContent | Set-Content $StartPath
-    Write-Log "Generated: Start_$SafeProgramName.bat"
-    $GeneratedBatFiles++
-    
-    # Generate Stop bat file
-    $StopContent = @"
-@echo off
-cd /d "$ScriptsDir"
-powershell.exe -ExecutionPolicy Bypass -File "StopProgram.ps1" -ProgramName "$($Program.name)"
-"@
-    $StopPath = Join-Path $ShellDir "Stop_$SafeProgramName.bat"
-    $StopContent | Set-Content $StopPath
-    Write-Log "Generated: Stop_$SafeProgramName.bat"
-    $GeneratedBatFiles++
+    # Generate program batch files using helper function
+    $ProgramBatCount = New-ProgramBatchFiles -Program $Program -ShellDir $ShellDir -ScriptsDir $ScriptsDir -SafeProgramName $SafeProgramName
+    $GeneratedBatFiles += $ProgramBatCount
     
     # Store button configuration for HTML generation
     $ButtonConfigs += @{
