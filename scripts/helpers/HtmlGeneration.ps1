@@ -22,16 +22,40 @@ function New-StreamDeckHtml {
         .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
         h2 { color: #34495e; margin-top: 30px; }
-        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin: 20px 0; }
         .button-card { border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: #fafafa; }
         .button-card h3 { margin: 0 0 10px 0; color: #2c3e50; }
-        .button-info { display: flex; align-items: center; margin: 10px 0; }
-        .button-info img { width: 32px; height: 32px; margin-right: 10px; border-radius: 4px; }
-        .button-info .no-icon { width: 32px; height: 32px; margin-right: 10px; background: #bdc3c7; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; }
-        .file-path { font-family: monospace; background: #ecf0f1; padding: 2px 6px; border-radius: 3px; font-size: 12px; }
+        .button-info { display: flex; align-items: flex-start; margin: 15px 0; }
+        .button-info img { width: 32px; height: 32px; margin-right: 10px; border-radius: 4px; flex-shrink: 0; }
+        .button-info .no-icon { width: 32px; height: 32px; margin-right: 10px; background: #bdc3c7; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; flex-shrink: 0; }
+        .path-container { margin: 5px 0; }
+        .path-input { width: 100%; padding: 5px; font-family: monospace; font-size: 11px; border: 1px solid #ddd; border-radius: 3px; background: #f8f9fa; }
+        .copy-btn { margin-left: 5px; padding: 4px 8px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; }
+        .copy-btn:hover { background: #0056b3; }
+        .copy-btn:active { background: #004085; }
         .global-buttons { background: #e8f6f3; padding: 15px; border-radius: 8px; margin: 20px 0; }
         .instructions { background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107; }
     </style>
+    <script>
+        function copyToClipboard(inputElement) {
+            inputElement.select();
+            inputElement.setSelectionRange(0, 99999);
+            try {
+                document.execCommand('copy');
+                // Visual feedback
+                const btn = inputElement.nextElementSibling;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Copied!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '#007bff';
+                }, 2000);
+            } catch (err) {
+                alert('Copy failed. Please select and copy manually.');
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -60,8 +84,9 @@ function New-StreamDeckHtml {
         "<div class=`"no-icon`">▶</div>"
     }
     
+    $StartAllBatPath = $Paths.ProjectRoot + "\shell\StartAll.bat"
     $StartAllIconPath = if ($GlobalIcons.HasStartAllIcon) {
-        ($Paths.ProjectRoot + "\" + $GlobalIcons.StartAllIconPath) -replace '\\', '\\'
+        $Paths.ProjectRoot + "\" + $GlobalIcons.StartAllIconPath
     } else {
         "Use emoji fallback (▶)"
     }
@@ -71,10 +96,18 @@ function New-StreamDeckHtml {
                     <h3>Start All Programs</h3>
                     <div class="button-info">
                         $StartAllIconHtml
-                        <div>
+                        <div style="flex-grow: 1;">
                             <strong>Action:</strong> Start all configured programs<br>
-                            <strong>File:</strong> <span class="file-path">$($Paths.ProjectRoot -replace '\\', '\\')\shell\StartAll.bat</span>
-                            <br><strong>Icon:</strong> <span class="file-path">$StartAllIconPath</span>
+                            <div class="path-container">
+                                <strong>File Path:</strong><br>
+                                <input type="text" class="path-input" value="$StartAllBatPath" readonly>
+                                <button class="copy-btn" onclick="copyToClipboard(this.previousElementSibling)">📋 Copy</button>
+                            </div>
+                            <div class="path-container">
+                                <strong>Icon Path:</strong><br>
+                                <input type="text" class="path-input" value="$StartAllIconPath" readonly>
+                                <button class="copy-btn" onclick="copyToClipboard(this.previousElementSibling)">📋 Copy</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -87,8 +120,9 @@ function New-StreamDeckHtml {
         "<div class=`"no-icon`">⏹</div>"
     }
     
+    $StopAllBatPath = $Paths.ProjectRoot + "\shell\StopAll.bat"
     $StopAllIconPath = if ($GlobalIcons.HasStopAllIcon) {
-        ($Paths.ProjectRoot + "\" + $GlobalIcons.StopAllIconPath) -replace '\\', '\\'
+        $Paths.ProjectRoot + "\" + $GlobalIcons.StopAllIconPath
     } else {
         "Use emoji fallback (⏹)"
     }
@@ -98,10 +132,18 @@ function New-StreamDeckHtml {
                     <h3>Stop All Programs</h3>
                     <div class="button-info">
                         $StopAllIconHtml
-                        <div>
+                        <div style="flex-grow: 1;">
                             <strong>Action:</strong> Stop all configured programs<br>
-                            <strong>File:</strong> <span class="file-path">$($Paths.ProjectRoot -replace '\\', '\\')\shell\StopAll.bat</span>
-                            <br><strong>Icon:</strong> <span class="file-path">$StopAllIconPath</span>
+                            <div class="path-container">
+                                <strong>File Path:</strong><br>
+                                <input type="text" class="path-input" value="$StopAllBatPath" readonly>
+                                <button class="copy-btn" onclick="copyToClipboard(this.previousElementSibling)">📋 Copy</button>
+                            </div>
+                            <div class="path-container">
+                                <strong>Icon Path:</strong><br>
+                                <input type="text" class="path-input" value="$StopAllIconPath" readonly>
+                                <button class="copy-btn" onclick="copyToClipboard(this.previousElementSibling)">📋 Copy</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -131,22 +173,22 @@ function New-StreamDeckHtml {
             "<div class=`"no-icon`">🔄</div>"
         }
         
-        $FocusBatPath = ($Paths.ProjectRoot + "\" + $ButtonConfig.FocusBat) -replace '\\', '\\'
-        $RestartBatPath = ($Paths.ProjectRoot + "\" + $ButtonConfig.RestartBat) -replace '\\', '\\'
+        $FocusBatPath = $Paths.ProjectRoot + "\" + $ButtonConfig.FocusBat
+        $RestartBatPath = $Paths.ProjectRoot + "\" + $ButtonConfig.RestartBat
         
         # Determine icon paths to display
         $FocusIconDisplayPath = if ($ButtonConfig.HasFocusIcon) {
-            ($Paths.ProjectRoot + "\" + $ButtonConfig.FocusIconPath) -replace '\\', '\\'
+            $Paths.ProjectRoot + "\" + $ButtonConfig.FocusIconPath
         } elseif ($ButtonConfig.HasIcon) {
-            ($Paths.ProjectRoot + "\" + $ButtonConfig.BaseIconPath) -replace '\\', '\\'
+            $Paths.ProjectRoot + "\" + $ButtonConfig.BaseIconPath
         } else {
             "Use emoji fallback (👁)"
         }
         
         $RestartIconDisplayPath = if ($ButtonConfig.HasRestartIcon) {
-            ($Paths.ProjectRoot + "\" + $ButtonConfig.RestartIconPath) -replace '\\', '\\'
+            $Paths.ProjectRoot + "\" + $ButtonConfig.RestartIconPath
         } elseif ($ButtonConfig.HasIcon) {
-            ($Paths.ProjectRoot + "\" + $ButtonConfig.BaseIconPath) -replace '\\', '\\'
+            $Paths.ProjectRoot + "\" + $ButtonConfig.BaseIconPath
         } else {
             "Use emoji fallback (🔄)"
         }
@@ -157,19 +199,35 @@ function New-StreamDeckHtml {
                 
                 <div class="button-info">
                     $FocusIconHtml
-                    <div>
+                    <div style="flex-grow: 1;">
                         <strong>Focus Button</strong><br>
-                        <strong>File:</strong> <span class="file-path">$FocusBatPath</span>
-                        <br><strong>Icon:</strong> <span class="file-path">$FocusIconDisplayPath</span>
+                        <div class="path-container">
+                            <strong>File Path:</strong><br>
+                            <input type="text" class="path-input" value="$FocusBatPath" readonly>
+                            <button class="copy-btn" onclick="copyToClipboard(this.previousElementSibling)">📋 Copy</button>
+                        </div>
+                        <div class="path-container">
+                            <strong>Icon Path:</strong><br>
+                            <input type="text" class="path-input" value="$FocusIconDisplayPath" readonly>
+                            <button class="copy-btn" onclick="copyToClipboard(this.previousElementSibling)">📋 Copy</button>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="button-info">
                     $RestartIconHtml
-                    <div>
+                    <div style="flex-grow: 1;">
                         <strong>Restart Button</strong><br>
-                        <strong>File:</strong> <span class="file-path">$RestartBatPath</span>
-                        <br><strong>Icon:</strong> <span class="file-path">$RestartIconDisplayPath</span>
+                        <div class="path-container">
+                            <strong>File Path:</strong><br>
+                            <input type="text" class="path-input" value="$RestartBatPath" readonly>
+                            <button class="copy-btn" onclick="copyToClipboard(this.previousElementSibling)">📋 Copy</button>
+                        </div>
+                        <div class="path-container">
+                            <strong>Icon Path:</strong><br>
+                            <input type="text" class="path-input" value="$RestartIconDisplayPath" readonly>
+                            <button class="copy-btn" onclick="copyToClipboard(this.previousElementSibling)">📋 Copy</button>
+                        </div>
                     </div>
                 </div>
             </div>
