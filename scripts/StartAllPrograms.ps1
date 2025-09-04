@@ -31,8 +31,14 @@ foreach ($Program in $Config.programs) {
 
     try {
         Write-Log "Starting $($Program.name)..."
-        Start-Process -FilePath $Program.path -ErrorAction Stop
-        Write-Log "$($Program.name) started successfuly"
+        # Start process detached from parent - this prevents CMD window dependency
+        $ProcessStartInfo = New-Object System.Diagnostics.ProcessStartInfo
+        $ProcessStartInfo.FileName = $Program.path
+        $ProcessStartInfo.UseShellExecute = $true
+        $ProcessStartInfo.CreateNoWindow = $false
+        
+        $DetachedProcess = [System.Diagnostics.Process]::Start($ProcessStartInfo)
+        Write-Log "$($Program.name) started successfully (PID: $($DetachedProcess.Id))"
 
         if (-not $NoWait) {
             Start-Sleep -Seconds 2

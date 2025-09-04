@@ -46,8 +46,14 @@ if ($Process) {
 # Starting program
 Write-Log "Launching $ProgramName..."
 try {
-    Start-Process -FilePath $Program.path -ErrorAction Stop
-    Write-Log "$ProgramName started successfuly"
+    # Start process detached from parent - this prevents CMD window dependency
+    $ProcessStartInfo = New-Object System.Diagnostics.ProcessStartInfo
+    $ProcessStartInfo.FileName = $Program.path
+    $ProcessStartInfo.UseShellExecute = $true
+    $ProcessStartInfo.CreateNoWindow = $false
+    
+    $DetachedProcess = [System.Diagnostics.Process]::Start($ProcessStartInfo)
+    Write-Log "$ProgramName started successfully (PID: $($DetachedProcess.Id))"
 }
 catch {
     Write-Log "Error while starting $ProgramName : $($_.Exception.Message)"

@@ -189,7 +189,8 @@ $ScriptsDir = Join-Path $Paths.ProjectRoot "scripts"
 $StartAllContent = @"
 @echo off
 cd /d "$ScriptsDir"
-powershell.exe -ExecutionPolicy Bypass -File "StartAllPrograms.ps1" -NoWait
+start /b powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File "StartAllPrograms.ps1" -NoWait
+exit
 "@
 $StartAllPath = Join-Path $ShellDir "StartAll.bat"
 $StartAllContent | Set-Content $StartAllPath
