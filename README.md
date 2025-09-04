@@ -4,7 +4,15 @@
 
 ## What This Project Does
 
-iRacing Automation is a comprehensive toolset that simplifies the management of all your iRacing-related applications through a single, automated workflow. Instead of manually launching each program every time you race, this project:
+iRacing Automation is a comprehensive toolset that simplifies the management of all your iRacing-related applications through a single, automated workflow. Instead of manually launching each program every time you race, this project automates everything and provides a professional Stream Deck interface:
+
+## Stream Deck Integration Example
+
+The project automatically generates a complete Stream Deck setup with organized buttons for all your iRacing applications. Each program gets individual control buttons (Focus, Restart, Start, Stop) plus global Start All/Stop All controls, complete with custom-generated icons and overlays:
+
+![Stream Deck Configuration Example](assets/images/stream-deck-screenshot.jpg)
+
+*This is what your Stream Deck will look like after running the installation - fully configured with color-coded action buttons and professional icons extracted from your installed applications.*
 
 ### 🎯 **Core Features:**
 - **Automated Application Discovery** - Scans your system for iRacing applications and validates installation paths
@@ -43,6 +51,14 @@ iRacing Automation is a comprehensive toolset that simplifies the management of 
 3. **Configure Stream Deck:**
    - Open `StreamDeckInstructions.html` in your browser
    - Follow the visual guide to set up buttons
+
+## Generated Setup Instructions
+
+The installation automatically creates a comprehensive HTML guide with copy-paste functionality for easy Stream Deck configuration. Each button includes file paths and icon paths with one-click copying:
+
+[![HTML Setup Instructions](assets/images/html-instructions-screenshot.jpg)](assets/images/html-instructions-screenshot.jpg)
+
+*Click the image above to view the full-size setup instructions - the generated HTML guide provides step-by-step configuration with copy buttons for all file and icon paths.*
 
 ## What Install.ps1 Does
 

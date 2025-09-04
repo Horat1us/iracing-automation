@@ -1,0 +1,3 @@
+# Keep this directory in git but allow selective ignoring of assets if needed
+# Currently tracking all assets - remove this line to ignore specific file types
+!*
