@@ -395,6 +395,19 @@ $HtmlPath = Join-Path $Paths.ProjectRoot "StreamDeckInstructions.html"
 $HtmlContent | Set-Content $HtmlPath -Encoding UTF8
 Write-Log "Generated: StreamDeckInstructions.html"
 
+# Try to open HTML file in default browser
+Write-Log "Attempting to open StreamDeckInstructions.html in browser..."
+try {
+    # Use Start-Process with -PassThru to capture the process and avoid blocking
+    $BrowserProcess = Start-Process -FilePath $HtmlPath -PassThru -ErrorAction Stop
+    Write-Log "Successfully opened StreamDeckInstructions.html in browser"
+    Write-Host "StreamDeckInstructions.html opened in your default browser."
+}
+catch {
+    Write-Log "WARNING: Could not open browser automatically: $($_.Exception.Message)"
+    Write-Host "Could not open browser automatically. Please manually open: $HtmlPath"
+}
+
 Write-Log "Installation completed successfully!"
 Write-Log "Configuration saved to: $($Paths.ConfigPath)"
 Write-Log "Found and configured $($ValidatedPrograms.Count) programs"
@@ -407,4 +420,6 @@ Write-Host "- Generated bat files in shell/ directory"
 Write-Host "- Extracted program icons to icons/ directory"
 Write-Host "- Created StreamDeckInstructions.html with setup guide"
 Write-Host ""
-Write-Host "Open StreamDeckInstructions.html in your browser for detailed setup instructions."
+Write-Host "Next steps:"
+Write-Host "- Follow the setup instructions in the browser window that should have opened"
+Write-Host "- If the browser didn't open automatically, manually open: StreamDeckInstructions.html"
